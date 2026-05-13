@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FretePro</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -460,7 +462,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <div id="sec-relatorios" class="sec">
       <div class="pg-hdr"><div class="page-title">Relatórios</div><div class="page-sub">Análise mensal completa</div></div>
-      <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button></div>
+      <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button><button class="btn-s" id="btn-export-pdf" onclick="exportarRelatorioPDF()" style="background:var(--accent);color:#fff;border:none">📄 Exportar PDF</button></div>
       <div class="sgrid" id="rel-stats"></div>
       <div class="two-col">
         <div class="panel"><div class="panel-title">📊 Gastos por categoria</div><div id="rel-cat"></div></div>
@@ -970,6 +972,138 @@ function go(sec){
   if(sec==='relatorios')renderRelatorio();
   if(sec==='abastecimento')renderAbast();
   if(sec==='contas')renderContas();
+}
+
+async function exportarRelatorioPDF(){
+  const btn=document.getElementById('btn-export-pdf');
+  btn.textContent='⏳ Gerando...';btn.disabled=true;
+  try{
+    const mes=document.getElementById('rel-mes').value;
+    const [ano,m]=mes.split('-');
+    const nomeMes=new Date(ano,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    const fM=fretes.filter(f=>f.data&&f.data.startsWith(mes));
+    const gM=gastos.filter(g=>(g.mes||'').slice(0,7)===mes);
+    const rec=fM.reduce((a,f)=>a+Number(f.valor||0),0);
+    const gst=gM.reduce((a,g)=>a+Number(g.valor||0),0);
+    const luc=rec-gst;
+    const mg=rec>0?((luc/rec)*100).toFixed(1):0;
+    const km=fM.reduce((a,f)=>a+Number(f.km||0),0);
+    const cats={};gM.forEach(g=>{cats[g.categoria]=(cats[g.categoria]||0)+Number(g.valor||0);});
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,pad=16;
+    // cabeçalho
+    doc.setFillColor(15,17,22);doc.rect(0,0,W,38,'F');
+    doc.setFillColor(59,130,246);doc.rect(0,0,4,38,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(240,242,250);
+    doc.text('FretePro',pad,16);
+    doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(134,142,168);
+    doc.text('Relatório Financeiro Mensal',pad,24);
+    doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(240,242,250);
+    doc.text(nomeMes.charAt(0).toUpperCase()+nomeMes.slice(1),pad,33);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(134,142,168);
+    doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`,W-pad,33,{align:'right'});
+    let y=50;
+    // cards de resumo
+    const cards=[
+      {lbl:'Receita Total',val:fmt(rec),cor:[52,211,153]},
+      {lbl:'Gastos Totais',val:fmt(gst),cor:[251,113,133]},
+      {lbl:'Lucro Líquido',val:fmt(luc),cor:luc>=0?[52,211,153]:[251,113,133]},
+      {lbl:'Margem',val:mg+'%',cor:luc>=0?[52,211,153]:[251,113,133]},
+      {lbl:'Fretes',val:String(fM.length),cor:[96,165,250]},
+      {lbl:'Km Rodados',val:fmtKm(km),cor:[251,191,36]},
+    ];
+    const cw=(W-pad*2-10)/3,ch=22;
+    cards.forEach((c,i)=>{
+      const cx=pad+(i%3)*(cw+5),cy=y+Math.floor(i/3)*(ch+5);
+      doc.setFillColor(29,31,38);doc.roundedRect(cx,cy,cw,ch,3,3,'F');
+      doc.setFillColor(...c.cor);doc.rect(cx,cy,2,ch,'F');
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(134,142,168);
+      doc.text(c.lbl,cx+6,cy+8);
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...c.cor);
+      doc.text(c.val,cx+6,cy+17);
+    });
+    y+=ch*2+15;
+    // gastos por categoria
+    if(Object.keys(cats).length){
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(240,242,250);
+      doc.text('Gastos por Categoria',pad,y);y+=7;
+      const tot=Object.values(cats).reduce((a,b)=>a+b,0);
+      Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+        const p=tot>0?Math.round((v/tot)*100):0;
+        const bw=W-pad*2-50;
+        doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(240,242,250);
+        doc.text(k,pad,y+4);
+        doc.setTextColor(251,113,133);doc.text(fmt(v),W-pad,y+4,{align:'right'});
+        doc.setFillColor(36,38,46);doc.roundedRect(pad,y+6,bw,3,1,1,'F');
+        doc.setFillColor(251,113,133);doc.roundedRect(pad,y+6,bw*(p/100),3,1,1,'F');
+        doc.setTextColor(134,142,168);doc.setFontSize(8);doc.text(p+'%',pad+bw+3,y+9);
+        y+=14;
+      });
+      y+=4;
+    }
+    // por caminhão
+    if(caminhoes.length){
+      if(y>240){doc.addPage();y=20;}
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(240,242,250);
+      doc.text('Resultado por Caminhão',pad,y);y+=8;
+      caminhoes.forEach(c=>{
+        const r=fM.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.valor||0),0);
+        const g=gM.filter(x=>x.caminhao_id===c.id).reduce((a,x)=>a+Number(x.valor||0),0);
+        const l=r-g;
+        doc.setFillColor(29,31,38);doc.roundedRect(pad,y,W-pad*2,12,2,2,'F');
+        doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(240,242,250);
+        doc.text(`${c.placa} — ${c.modelo}`,pad+4,y+5);
+        doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(134,142,168);
+        doc.text(`Rec: ${fmt(r)}  ·  Gastos: ${fmt(g)}`,pad+4,y+10);
+        doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(l>=0?52:251,l>=0?211:113,l>=0?153:133);
+        doc.text(fmt(l),W-pad,y+8,{align:'right'});
+        y+=16;
+      });
+      y+=4;
+    }
+    // tabela de fretes
+    if(fM.length){
+      if(y>220){doc.addPage();y=20;}
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(240,242,250);
+      doc.text('Fretes do Período',pad,y);y+=7;
+      const cols=['Data','Caminhão','Rota','Km','Valor','Status'];
+      const cws=[22,28,50,20,28,22];
+      doc.setFillColor(29,31,38);doc.rect(pad,y,W-pad*2,7,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(134,142,168);
+      let cx2=pad+2;cols.forEach((c,i)=>{doc.text(c,cx2,y+5);cx2+=cws[i];});y+=7;
+      fM.forEach((f,ri)=>{
+        if(y>275){doc.addPage();y=20;}
+        const cam=caminhoes.find(x=>x.id===f.caminhao_id);
+        if(ri%2===0){doc.setFillColor(24,26,32);doc.rect(pad,y,W-pad*2,7,'F');}
+        doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(240,242,250);
+        const row=[
+          f.data||'—',
+          cam?cam.placa:'—',
+          `${(f.origem||'').slice(0,12)}→${(f.destino||'').slice(0,12)}`,
+          f.km?fmtKm(f.km):'—',
+          fmt(f.valor),
+          f.status||'—'
+        ];
+        let rx=pad+2;row.forEach((v,i)=>{
+          if(i===4)doc.setTextColor(52,211,153);else doc.setTextColor(240,242,250);
+          doc.text(String(v),rx,y+5);rx+=cws[i];
+        });y+=7;
+      });
+    }
+    // rodapé
+    const pages=doc.internal.getNumberOfPages();
+    for(let i=1;i<=pages;i++){
+      doc.setPage(i);
+      doc.setFillColor(15,17,22);doc.rect(0,285,W,12,'F');
+      doc.setFillColor(59,130,246);doc.rect(0,285,W,0.5,'F');
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(134,142,168);
+      doc.text('FretePro — Sistema de Gestão de Fretes',pad,291);
+      doc.text(`Página ${i} de ${pages}`,W-pad,291,{align:'right'});
+    }
+    doc.save(`relatorio-${mes}.pdf`);
+  }catch(e){toast('Erro ao gerar PDF.','err');console.error(e);}
+  finally{btn.textContent='📄 Exportar PDF';btn.disabled=false;}
 }
 
 (function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}`;s.async=true;document.head.appendChild(s);})();
