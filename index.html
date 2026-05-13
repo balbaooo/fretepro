@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FretePro</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#101113;--bg2:#17181d;--bg3:#1d1f26;--bg4:#24262e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.2);
+  --text:#f0f2fa;--text2:#868ea8;--text3:#3d4560;
+  --accent:#3b82f6;--accent2:#1d4ed8;--accent-glow:rgba(59,130,246,0.22);--accent-subtle:rgba(59,130,246,0.1);
+  --green:#34d399;--green-bg:rgba(52,211,153,0.08);--green-bd:rgba(52,211,153,0.2);
+  --red:#fb7185;--red-bg:rgba(251,113,133,0.08);--red-bd:rgba(251,113,133,0.2);
+  --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.08);--amber-bd:rgba(251,191,36,0.2);
+  --blue-bg:rgba(59,130,246,0.1);--blue-bd:rgba(59,130,246,0.22);
+  --radius:16px;--rsm:10px;--sidebar:244px;
+  --shadow:0 8px 40px rgba(0,0,0,.6);--shadow-sm:0 4px 24px rgba(0,0,0,.4);--tr:.18s ease
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+.syne{font-family:'Inter',sans-serif}
+
+/* AUTH */
+#auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;
+  background:radial-gradient(ellipse 75% 50% at 50% -5%,rgba(59,130,246,.14) 0%,transparent 65%),var(--bg)}
+.auth-card{background:var(--bg2);border:1px solid var(--border2);border-radius:22px;padding:2.75rem;width:100%;max-width:420px;
+  box-shadow:var(--shadow),0 0 100px rgba(59,130,246,.06)}
+.auth-logo{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:2.25rem}
+.auth-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),#1d4ed8);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 24px var(--accent-glow)}
+.auth-brand{font-family:'Inter',sans-serif;font-size:24px;font-weight:800}.auth-brand span{color:var(--accent)}
+.auth-title{font-size:19px;font-weight:700;text-align:center;margin-bottom:5px;font-family:'Inter',sans-serif}
+.auth-sub{color:var(--text2);font-size:13.5px;text-align:center;margin-bottom:1.75rem}
+.fg{margin-bottom:.95rem}
+.fg label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.fg input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
+  color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border-color var(--tr),box-shadow var(--tr)}
+.fg input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.btn-auth{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+  border-radius:var(--rsm);font-size:14.5px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin-top:.5rem;
+  transition:all var(--tr);box-shadow:0 4px 22px rgba(59,130,246,.32);letter-spacing:.02em}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 6px 30px rgba(59,130,246,.44)}
+.btn-auth:active{transform:translateY(0)}
+.auth-sw{text-align:center;margin-top:1.25rem;font-size:13.5px;color:var(--text2)}
+.auth-sw a{color:var(--accent);cursor:pointer;font-weight:500}
+.amsg{font-size:13px;padding:10px 14px;border-radius:var(--rsm);margin-bottom:1rem;display:none;font-weight:500}
+.amsg.err{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.amsg.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+
+/* APP */
+#app-wrap{display:none}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);
+  background:linear-gradient(180deg,#141519 0%,#101113 100%);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:1.3rem 1.2rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),#1d4ed8);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 14px var(--accent-glow)}
+.sb-brand{font-family:'Inter',sans-serif;font-size:16px;font-weight:800}.sb-brand span{color:var(--accent)}
+.sb-sec{padding:.85rem 1.15rem .3rem;font-size:9px;letter-spacing:.1em;color:var(--text3);font-weight:700;text-transform:uppercase;flex-shrink:0}
+.nv{display:flex;align-items:center;gap:9px;padding:8px 1rem 8px 14px;cursor:pointer;color:var(--text2);
+  font-size:13px;font-weight:500;transition:all var(--tr);margin:1px 8px;border-radius:var(--rsm);
+  border-left:2px solid transparent}
+.nv:hover{background:var(--bg4);color:var(--text)}
+.nv.on{background:var(--accent-subtle);color:var(--accent);font-weight:600;border-left-color:var(--accent)}
+.nv-ic{width:15px;height:15px;flex-shrink:0}
+.sb-foot{margin-top:auto;padding:1rem 1.15rem;border-top:1px solid var(--border);flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:.75rem}
+.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;box-shadow:0 2px 10px var(--accent-glow)}
+.sb-email{font-size:11.5px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-out{width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:var(--rsm);
+  color:var(--text2);font-size:12px;cursor:pointer;transition:all var(--tr);font-family:'Inter',sans-serif;font-weight:500}
+.btn-out:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);padding:1.75rem;min-height:100vh}
+.pg-hdr{margin-bottom:1.5rem}
+.page-title{font-size:22px;font-weight:800;margin-bottom:4px;font-family:'Inter',sans-serif}
+.page-sub{color:var(--text2);font-size:13px}
+
+/* STAT CARDS */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:1.4rem}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;
+  position:relative;overflow:hidden;transition:transform var(--tr),border-color var(--tr),box-shadow var(--tr);
+  box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity var(--tr)}
+.sc:hover{transform:translateY(-2px);border-color:var(--border2);box-shadow:var(--shadow-sm)}
+.sc:hover::after{opacity:1}
+.sc-lbl{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;font-weight:700}
+.sc-val{font-size:20px;font-weight:700;font-family:'Inter',sans-serif}
+.sc-val.g{color:var(--green)}.sc-val.r{color:var(--red)}.sc-val.b{color:var(--accent)}.sc-val.a{color:var(--amber)}
+
+/* PANELS */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 4px 24px rgba(0,0,0,.35)}
+.panel-title{font-size:14px;font-weight:700;margin-bottom:1.1rem;color:var(--text);font-family:'Inter',sans-serif}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+
+/* FORMS */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fr.t{grid-template-columns:1fr 1fr 1fr}.fr.f{grid-template-columns:1fr}
+.fld label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.fld input,.fld select,.fld textarea{width:100%;padding:8px 11px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--rsm);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;
+  transition:border-color var(--tr),box-shadow var(--tr)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.13)}
+.fld select option{background:var(--bg3)}.fld textarea{resize:vertical;min-height:54px}
+
+/* BUTTONS */
+.btn-s{padding:8px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+  border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--tr);
+  display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;
+  box-shadow:0 2px 12px rgba(59,130,246,.28);letter-spacing:.01em}
+.btn-s:hover{transform:translateY(-1px);box-shadow:0 4px 22px rgba(59,130,246,.4)}
+.btn-s:active{transform:translateY(0)}
+.btn-s.gn{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 2px 12px rgba(34,197,94,.22)}
+.btn-s.gn:hover{box-shadow:0 4px 22px rgba(34,197,94,.35)}
+.btn-del{padding:4px 8px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);
+  border-radius:6px;cursor:pointer;font-size:11.5px;transition:all var(--tr)}
+.btn-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;padding:8px 10px;color:var(--text3);font-weight:700;font-size:9.5px;letter-spacing:.07em;
+  text-transform:uppercase;border-bottom:1px solid var(--border2);background:rgba(255,255,255,.02);white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);transition:background var(--tr)}
+.tbl td strong{color:var(--text)}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.tbl-wrap{overflow-x:auto}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:10.5px;font-weight:600;letter-spacing:.02em}
+.badge.g{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.badge.r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.badge.a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.badge.b{background:var(--blue-bg);color:var(--accent);border:1px solid var(--blue-bd)}
+.badge.gr{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border2)}
+
+/* FILTERS */
+.filt{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filt select,.filt input{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
+  color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;transition:border-color var(--tr)}
+.filt select:focus,.filt input:focus{outline:none;border-color:var(--accent)}
+
+/* MISC */
+.empty{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.prog{height:5px;background:var(--bg4);border-radius:100px;overflow:hidden;margin-top:5px}
+.prog-f{height:100%;border-radius:100px;transition:width .5s ease}
+.prog-lg{height:12px;background:var(--bg4);border-radius:100px;overflow:hidden;margin-top:8px}
+.sec{display:none}.sec.on{display:block}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:var(--rsm);font-size:13px;
+  font-weight:600;z-index:9999;display:none;box-shadow:var(--shadow)}
+#toast.ok{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+#toast.err{background:linear-gradient(135deg,var(--red),#dc2626);color:#fff}
+
+/* MAP */
+#map{width:100%;height:340px;border-radius:var(--radius);border:1px solid var(--border);margin:1rem 0;background:var(--bg3)}
+
+/* TOLL */
+.toll-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);
+  border-radius:var(--rsm);border:1px solid var(--border);margin-bottom:6px;transition:border-color var(--tr)}
+.toll-item:hover{border-color:var(--border2)}
+.toll-name{font-size:12.5px;font-weight:600;color:var(--text)}.toll-road{font-size:10.5px;color:var(--text3);margin-top:2px}
+.toll-val{font-size:13.5px;font-weight:700;color:var(--amber)}
+
+/* ROUTE CARDS */
+.rr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+.rr{background:var(--bg3);border-radius:var(--rsm);padding:.9rem;text-align:center;border:1px solid var(--border);transition:border-color var(--tr)}
+.rr:hover{border-color:var(--border2)}
+.rr-lbl{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;font-weight:700}
+.rr-val{font-size:17px;font-weight:700;font-family:'Inter',sans-serif}
+
+/* FINANCIAL TABS */
+.fin-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:1.25rem;flex-wrap:wrap}
+.fin-tab{padding:8px 15px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;
+  font-size:13px;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;transition:all var(--tr);margin-bottom:-1px}
+.fin-tab:hover{color:var(--text)}
+.fin-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.fin-panel{display:none}.fin-panel.on{display:block}
+
+/* COST CARDS */
+.cc{background:var(--bg3);border-radius:var(--rsm);padding:1rem;border:1px solid var(--border);margin-bottom:.7rem;transition:border-color var(--tr)}
+.cc:hover{border-color:var(--border2)}
+.cc-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:.3rem}
+.cc-val{font-size:19px;font-weight:700;font-family:'Inter',sans-serif;color:var(--red)}.cc-sub{font-size:10.5px;color:var(--text3);margin-top:2px}
+
+/* BREAKEVEN */
+.pe-box{background:linear-gradient(135deg,rgba(59,130,246,.09),rgba(52,211,153,.06));border:1px solid var(--border2);
+  border-radius:var(--radius);padding:1.35rem;margin-bottom:1.25rem;text-align:center}
+.pe-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.4rem}
+.pe-val{font-size:28px;font-weight:800;font-family:'Inter',sans-serif;color:var(--accent)}.pe-sub{font-size:12px;color:var(--text3);margin-top:.3rem}
+
+/* META */
+.meta-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem}
+.meta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem}
+.meta-title{font-size:14px;font-weight:700;color:var(--text);font-family:'Inter',sans-serif}
+.meta-pct{font-size:22px;font-weight:800;font-family:'Inter',sans-serif}
+</style>
+</head>
+<body>
+<div id="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="auth-icon">🚛</div><div class="auth-brand">Frete<span>Pro</span></div></div>
+    <div id="amsg" class="amsg"></div>
+    <div id="f-login">
+      <div class="auth-title">Bem-vindo de volta</div>
+      <div class="auth-sub">Entre com sua conta para continuar</div>
+      <div class="fg"><label>E-mail</label><input id="l-email" type="email" placeholder="seu@email.com"></div>
+      <div class="fg"><label>Senha</label><input id="l-senha" type="password" placeholder="••••••••"></div>
+      <button class="btn-auth" onclick="login()">Entrar</button>
+      <div class="auth-sw">Não tem conta? <a onclick="tog('reg')">Criar conta</a></div>
+    </div>
+    <div id="f-reg" style="display:none">
+      <div class="auth-title">Criar conta</div>
+      <div class="auth-sub">Cadastre-se gratuitamente</div>
+      <div class="fg"><label>Nome</label><input id="r-nome" placeholder="Seu nome"></div>
+      <div class="fg"><label>E-mail</label><input id="r-email" type="email" placeholder="seu@email.com"></div>
+      <div class="fg"><label>Senha</label><input id="r-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
+      <button class="btn-auth" onclick="register()">Criar conta</button>
+      <div class="auth-sw">Já tem conta? <a onclick="tog('login')">Entrar</a></div>
+    </div>
+  </div>
+</div>
+
+<div id="app-wrap">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-icon">🚛</div><div class="sb-brand">Frete<span>Pro</span></div></div>
+    <div style="flex:1;overflow-y:auto;padding-bottom:.5rem">
+      <div class="sb-sec" style="margin-top:.5rem">Principal</div>
+      <div class="nv on" onclick="go('dashboard')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>Painel</div>
+      <div class="sb-sec">Operação</div>
+      <div class="nv" onclick="go('rota')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3" stroke-width="1.8"/><path stroke-width="1.8" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>Calculadora de Rota</div>
+      <div class="nv" onclick="go('fretes')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5" stroke-width="1.8"/><circle cx="18.5" cy="18.5" r="2.5" stroke-width="1.8"/></svg>Fretes</div>
+      <div class="nv" onclick="go('caminhoes')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="7" width="14" height="11" rx="1" stroke-width="1.8"/><path stroke-width="1.8" d="M16 10h4l2 3v4h-6V10z"/><circle cx="6" cy="20" r="2" stroke-width="1.8"/><circle cx="18" cy="20" r="2" stroke-width="1.8"/></svg>Caminhões</div>
+      <div class="nv" onclick="go('motoristas')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path stroke-width="1.8" d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Motoristas</div>
+      <div class="nv" onclick="go('abastecimento')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 22V8l9-6 9 6v14M9 22v-6h6v6"/></svg>Abastecimento</div>
+      <div class="sb-sec">Financeiro</div>
+      <div class="nv" onclick="go('financeiro')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Financeiro</div>
+      <div class="nv" onclick="go('contas')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M9 14l2 2 4-4"/><rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.8"/></svg>Contas a Receber</div>
+      <div class="nv" onclick="go('gastos')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke-width="1.8"/><path stroke-width="1.8" d="M2 10h20"/></svg>Gastos</div>
+      <div class="nv" onclick="go('relatorios')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M18 20V10M12 20V4M6 20v-6"/></svg>Relatórios</div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user"><div class="sb-av" id="sb-av">?</div><div class="sb-email" id="sb-email">...</div></div>
+      <button class="btn-out" onclick="logout()">Sair da conta</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="sec-dashboard" class="sec on">
+      <div class="pg-hdr"><div class="page-title">Painel</div><div class="page-sub" id="dash-dt"></div></div>
+      <div id="meta-dash"></div>
+      <div class="sgrid" id="dash-stats"></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-title">🚛 Fretes recentes</div><div id="dash-fr"></div></div>
+        <div class="panel"><div class="panel-title">💳 Contas a receber</div><div id="dash-contas"></div></div>
+      </div>
+      <div class="panel"><div class="panel-title">⛽ Últimos abastecimentos</div><div id="dash-abast"></div></div>
+    </div>
+
+    <div id="sec-rota" class="sec">
+      <div class="pg-hdr"><div class="page-title">Calculadora de Rota</div><div class="page-sub">Calcule pedágios e custos por cidade</div></div>
+      <div class="panel">
+        <div class="panel-title">📍 Definir rota</div>
+        <div class="fr"><div class="fld"><label>Origem (cidade, UF)</label><input id="rt-orig" placeholder="Ex: São Paulo, SP"></div><div class="fld"><label>Destino (cidade, UF)</label><input id="rt-dest" placeholder="Ex: Curitiba, PR"></div></div>
+        <div class="fr t">
+          <div class="fld"><label>Caminhão</label><select id="rt-cam"></select></div>
+          <div class="fld"><label>Eixos</label><select id="rt-eixos"><option value="2">2 eixos</option><option value="3">3 eixos</option><option value="4">4 eixos (Toco)</option><option value="5">5 eixos</option><option value="6" selected>6 eixos (Truck)</option><option value="7">7 eixos</option><option value="8">8 eixos (Bitruck)</option><option value="9">9 eixos (Carreta)</option></select></div>
+          <div class="fld"><label>Consumo (km/l)</label><input id="rt-consumo" type="number" value="3.5" step="0.1"></div>
+        </div>
+        <div class="fr"><div class="fld"><label>Preço diesel (R$/L)</label><input id="rt-diesel" type="number" value="6.20" step="0.01"></div><div class="fld"><label>Valor do frete (R$)</label><input id="rt-valor" type="number" placeholder="Opcional"></div></div>
+        <button class="btn-s" onclick="calcRota()">🗺️ Calcular rota e pedágios</button>
+      </div>
+      <div id="rota-result" style="display:none">
+        <div class="rr-grid" id="rota-cards"></div>
+        <div class="two-col">
+          <div><div id="map"></div></div>
+          <div class="panel" style="margin-bottom:0;max-height:380px;overflow-y:auto">
+            <div class="panel-title">🛣️ Pedágios na rota</div>
+            <div id="toll-list"></div>
+            <div id="toll-total" style="margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--border)"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:1.1rem">
+          <div class="panel-title">💰 Análise financeira</div>
+          <div id="rota-analise"></div>
+          <button class="btn-s gn" style="margin-top:.9rem" onclick="registrarFreteDaRota()">✅ Registrar este frete</button>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:1.1rem"><div class="panel-title">📊 Rotas mais lucrativas</div><div id="hist-rotas"></div></div>
+    </div>
+
+    <div id="sec-fretes" class="sec">
+      <div class="pg-hdr"><div class="page-title">Fretes</div><div class="page-sub">Registre e acompanhe suas viagens</div></div>
+      <div class="panel">
+        <div class="panel-title">➕ Registrar frete</div>
+        <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam"></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
+        <div class="fr"><div class="fld"><label>Data</label><input id="f-dt" type="date"></div><div class="fld"><label>Cliente</label><input id="f-cli" placeholder="Nome do cliente"></div></div>
+        <div class="fr"><div class="fld"><label>Origem</label><input id="f-ori" placeholder="Cidade, Estado"></div><div class="fld"><label>Destino</label><input id="f-des" placeholder="Cidade, Estado"></div></div>
+        <div class="fr t"><div class="fld"><label>Valor (R$)</label><input id="f-val" type="number" placeholder="0.00"></div><div class="fld"><label>Km rodados</label><input id="f-km" type="number" placeholder="0"></div><div class="fld"><label>Carga</label><input id="f-carg" placeholder="Ex: grãos..."></div></div>
+        <div class="fr t">
+          <div class="fld"><label>Pedágio (R$)</label><input id="f-ped" type="number" placeholder="0.00"></div>
+          <div class="fld"><label>Status pagamento</label><select id="f-pag"><option value="Pago">Pago</option><option value="Pendente">Pendente</option><option value="Parcial">Parcial</option></select></div>
+          <div class="fld"><label>Status viagem</label><select id="f-st"><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select></div>
+        </div>
+        <div class="fr"><div class="fld"><label>Vencimento pagamento</label><input id="f-venc" type="date"></div><div class="fld"><label>Observações</label><input id="f-obs" placeholder="Notas..."></div></div>
+        <button class="btn-s" onclick="salvarFrete()">💾 Salvar frete</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">📋 Histórico</div>
+        <div class="filt">
+          <select id="ff-cam" onchange="renderFretes()"><option value="">Todos os caminhões</option></select>
+          <select id="ff-st" onchange="renderFretes()"><option value="">Todos os status</option><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select>
+          <input type="month" id="ff-mes" onchange="renderFretes()">
+        </div>
+        <div class="tbl-wrap"><div id="lista-fretes"></div></div>
+      </div>
+    </div>
+
+    <div id="sec-caminhoes" class="sec">
+      <div class="pg-hdr"><div class="page-title">Caminhões</div><div class="page-sub">Gerencie sua frota</div></div>
+      <div class="panel">
+        <div class="panel-title">➕ Cadastrar caminhão</div>
+        <div class="fr t"><div class="fld"><label>Placa</label><input id="c-pla" placeholder="ABC-1234"></div><div class="fld"><label>Modelo</label><input id="c-mod" placeholder="Scania R450"></div><div class="fld"><label>Ano</label><input id="c-ano" type="number" placeholder="2022"></div></div>
+        <div class="fr t">
+          <div class="fld"><label>Tipo</label><select id="c-tip"><option>Truck (6 eixos)</option><option>Carreta (9 eixos)</option><option>Bitruck (8 eixos)</option><option>Toco (4 eixos)</option><option>Outro</option></select></div>
+          <div class="fld"><label>Eixos</label><select id="c-eix"><option value="4">4</option><option value="6" selected>6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></div>
+          <div class="fld"><label>Status</label><select id="c-st"><option>Disponível</option><option>Em viagem</option><option>Manutenção</option></select></div>
+        </div>
+        <div class="fr"><div class="fld"><label>Consumo médio (km/l)</label><input id="c-cons" type="number" placeholder="3.5" step="0.1"></div><div class="fld"><label>Vencimento seguro</label><input id="c-seg" type="date"></div></div>
+        <div class="fr f"><div class="fld"><label>Observações</label><textarea id="c-obs"></textarea></div></div>
+        <button class="btn-s" onclick="salvarCaminhao()">💾 Salvar</button>
+      </div>
+      <div class="panel"><div class="panel-title">🚚 Frota</div><div class="tbl-wrap"><div id="lista-cam"></div></div></div>
+      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"></div></div>
+    </div>
+
+    <div id="sec-motoristas" class="sec">
+      <div class="pg-hdr"><div class="page-title">Motoristas</div><div class="page-sub">Gerencie sua equipe</div></div>
+      <div class="panel">
+        <div class="panel-title">➕ Cadastrar motorista</div>
+        <div class="fr"><div class="fld"><label>Nome completo</label><input id="m-nom" placeholder="João da Silva"></div><div class="fld"><label>Telefone</label><input id="m-tel" placeholder="(11) 99999-9999"></div></div>
+        <div class="fr"><div class="fld"><label>CNH</label><input id="m-cnh" placeholder="Número da CNH"></div><div class="fld"><label>Vencimento CNH</label><input id="m-vcnh" type="date"></div></div>
+        <div class="fr"><div class="fld"><label>Salário fixo (R$)</label><input id="m-sal" type="number" placeholder="0.00"></div><div class="fld"><label>% por frete</label><input id="m-pct" type="number" placeholder="Ex: 10"></div></div>
+        <div class="fr f"><div class="fld"><label>Observações</label><textarea id="m-obs"></textarea></div></div>
+        <button class="btn-s" onclick="salvarMotorista()">💾 Salvar</button>
+      </div>
+      <div class="panel"><div class="panel-title">👥 Motoristas</div><div class="tbl-wrap"><div id="lista-mot"></div></div></div>
+      <div class="panel"><div class="panel-title">💰 Comissões este mês</div><div id="comissoes"></div></div>
+    </div>
+
+    <div id="sec-abastecimento" class="sec">
+      <div class="pg-hdr"><div class="page-title">Abastecimento</div><div class="page-sub">Controle de combustível e consumo real</div></div>
+      <div class="panel">
+        <div class="panel-title">⛽ Registrar abastecimento</div>
+        <div class="fr"><div class="fld"><label>Caminhão</label><select id="a-cam"></select></div><div class="fld"><label>Motorista</label><select id="a-mot"><option value="">Sem motorista</option></select></div></div>
+        <div class="fr"><div class="fld"><label>Data</label><input id="a-dt" type="date"></div><div class="fld"><label>Posto</label><input id="a-posto" placeholder="Nome do posto"></div></div>
+        <div class="fr t">
+          <div class="fld"><label>Litros</label><input id="a-litros" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
+          <div class="fld"><label>Preço por litro (R$)</label><input id="a-preco" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
+          <div class="fld"><label>Total (R$)</label><input id="a-total" type="number" placeholder="Calculado auto" step="0.01"></div>
+        </div>
+        <div class="fr"><div class="fld"><label>Km atual (odômetro)</label><input id="a-km" type="number" placeholder="Ex: 125000"></div><div class="fld"><label>Km/L real (calculado)</label><input id="a-kml" readonly placeholder="Automático" style="opacity:.6"></div></div>
+        <div class="fr f"><div class="fld"><label>Observações</label><input id="a-obs" placeholder="Notas..."></div></div>
+        <button class="btn-s" onclick="salvarAbast()">💾 Salvar abastecimento</button>
+      </div>
+      <div class="sgrid" id="abast-resumo"></div>
+      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"></div></div>
+      <div class="panel">
+        <div class="panel-title">📋 Histórico</div>
+        <div class="filt">
+          <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option></select>
+          <input type="month" id="af-mes" onchange="renderAbast()">
+        </div>
+        <div class="tbl-wrap"><div id="lista-abast"></div></div>
+      </div>
+    </div>
+
+    <div id="sec-financeiro" class="sec">
+      <div class="pg-hdr"><div class="page-title">Financeiro</div><div class="page-sub">Custos, lucros e metas</div></div>
+      <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end">
+        <div class="fld"><label>Período</label><input type="month" id="fin-mes" onchange="renderFinanceiro()"></div>
+        <div class="fld" style="flex:1;min-width:180px"><label>Meta de faturamento (R$)</label><input id="meta-val" type="number" placeholder="Ex: 50000"></div>
+        <button class="btn-s" onclick="salvarMeta()">🎯 Salvar meta</button>
+        <button class="btn-s" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)" onclick="renderFinanceiro()">🔄</button>
+      </div>
+      <div class="meta-box" id="meta-fin" style="display:none"></div>
+      <div class="sgrid" id="fin-stats"></div>
+      <div class="pe-box" id="pe-box"></div>
+      <div class="panel"><div class="panel-title">📅 Comparativo — últimos 4 meses</div><div id="comparativo"></div></div>
+      <div class="fin-tabs">
+        <button class="fin-tab on" onclick="finTab('fix')">Custos fixos</button>
+        <button class="fin-tab" onclick="finTab('var')">Custos variáveis</button>
+        <button class="fin-tab" onclick="finTab('km')">Custo por Km</button>
+        <button class="fin-tab" onclick="finTab('cam')">Por caminhão</button>
+      </div>
+      <div id="fin-fix" class="fin-panel on">
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-title">➕ Custo fixo</div>
+            <div class="fr"><div class="fld"><label>Categoria</label><select id="cf-cat"><option>IPVA</option><option>Seguro do caminhão</option><option>Financiamento / Parcela</option><option>Salário fixo motorista</option><option>Licenciamento</option><option>Contador</option><option>Telefone / Internet</option><option>Imposto</option><option>Outros fixos</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cf-val" type="number" placeholder="0.00"></div></div>
+            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cf-cam"><option value="">Geral</option></select></div><div class="fld"><label>Mês</label><input id="cf-mes" type="month"></div></div>
+            <div class="fr f"><div class="fld"><label>Descrição</label><input id="cf-desc" placeholder="Detalhe..."></div></div>
+            <button class="btn-s" onclick="salvarGasto('fixo')">💾 Salvar</button>
+          </div>
+          <div class="panel"><div class="panel-title">📊 Fixos do mês</div><div id="fin-fix-lista"></div></div>
+        </div>
+      </div>
+      <div id="fin-var" class="fin-panel">
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-title">➕ Custo variável</div>
+            <div class="fr"><div class="fld"><label>Categoria</label><select id="cv-cat"><option>Combustível</option><option>Pedágio</option><option>Pneus / Recapagem</option><option>Manutenção preventiva</option><option>Manutenção corretiva</option><option>Lavagem</option><option>Alimentação motorista</option><option>Hospedagem / Diária</option><option>Ajuda de custo</option><option>Outros variáveis</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cv-val" type="number" placeholder="0.00"></div></div>
+            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cv-cam"><option value="">Geral</option></select></div><div class="fld"><label>Data</label><input id="cv-dt" type="date"></div></div>
+            <div class="fr f"><div class="fld"><label>Descrição</label><textarea id="cv-desc"></textarea></div></div>
+            <button class="btn-s" onclick="salvarGasto('variavel')">💾 Salvar</button>
+          </div>
+          <div class="panel"><div class="panel-title">📊 Variáveis do mês</div><div id="fin-var-lista"></div></div>
+        </div>
+      </div>
+      <div id="fin-km" class="fin-panel"><div class="panel"><div class="panel-title">📏 Custo por Km</div><div id="fin-km-lista"></div></div></div>
+      <div id="fin-cam" class="fin-panel"><div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="fin-cam-lista"></div></div></div>
+    </div>
+
+    <div id="sec-contas" class="sec">
+      <div class="pg-hdr"><div class="page-title">Contas a Receber</div><div class="page-sub">Controle de pagamentos</div></div>
+      <div class="sgrid" id="contas-stats"></div>
+      <div class="panel">
+        <div class="panel-title">➕ Nova conta</div>
+        <div class="fr"><div class="fld"><label>Cliente</label><input id="cr-cli" placeholder="Nome do cliente"></div><div class="fld"><label>Valor (R$)</label><input id="cr-val" type="number" placeholder="0.00"></div></div>
+        <div class="fr"><div class="fld"><label>Vencimento</label><input id="cr-venc" type="date"></div><div class="fld"><label>Status</label><select id="cr-st"><option>Pendente</option><option>Recebido</option><option>Parcial</option><option>Atrasado</option></select></div></div>
+        <div class="fr f"><div class="fld"><label>Observações</label><input id="cr-obs" placeholder="Notas..."></div></div>
+        <button class="btn-s" onclick="salvarConta()">💾 Salvar</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">📋 Contas</div>
+        <div class="filt"><select id="cf-st2" onchange="renderContas()"><option value="">Todos</option><option>Pendente</option><option>Recebido</option><option>Parcial</option><option>Atrasado</option></select></div>
+        <div class="tbl-wrap"><div id="lista-contas"></div></div>
+      </div>
+    </div>
+
+    <div id="sec-gastos" class="sec">
+      <div class="pg-hdr"><div class="page-title">Gastos</div><div class="page-sub">Histórico completo de despesas</div></div>
+      <div class="panel">
+        <div class="panel-title">📋 Todos os gastos</div>
+        <div class="filt">
+          <select id="gf-cam" onchange="renderGastos()"><option value="">Todos os caminhões</option></select>
+          <select id="gf-tip" onchange="renderGastos()"><option value="">Fixo e variável</option><option value="fixo">Fixos</option><option value="variavel">Variáveis</option></select>
+          <input type="month" id="gf-mes" onchange="renderGastos()">
+        </div>
+        <div class="tbl-wrap"><div id="lista-gastos"></div></div>
+      </div>
+    </div>
+
+    <div id="sec-relatorios" class="sec">
+      <div class="pg-hdr"><div class="page-title">Relatórios</div><div class="page-sub">Análise mensal completa</div></div>
+      <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button></div>
+      <div class="sgrid" id="rel-stats"></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-title">📊 Gastos por categoria</div><div id="rel-cat"></div></div>
+        <div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="rel-cam"></div></div>
+      </div>
+      <div class="panel"><div class="panel-title">🗓️ Fretes do período</div><div class="tbl-wrap"><div id="rel-fr"></div></div></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://zdtrxkjvdpduflzllyvm.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdHJ4a2p2ZHBkdWZsemxseXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzQ4MTAsImV4cCI6MjA5Mzc1MDgxMH0.m-mtuLBSYCqAVhYYIKbwAumdgRCTMpkdfvtuOtglqwg';
+const GM_KEY='AIzaSyACnKPJyMoQ1nrpQyQh6qC3E6Wli2jCeZM';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+let user=null,caminhoes=[],motoristas=[],fretes=[],gastos=[],abastecimentos=[],contas=[],metas=[],map=null,dirRenderer=null,rotaAtual=null;
+
+const PEDAGIOS=[
+  {nome:'Fernão Dias',rod:'BR-381',estados:['SP','MG'],base:4.20},{nome:'Dutra',rod:'BR-116',estados:['SP','RJ'],base:3.80},
+  {nome:'Régis Bittencourt',rod:'BR-116S',estados:['SP','PR'],base:3.60},{nome:'Anhanguera/Bandeirantes',rod:'SP-330',estados:['SP'],base:4.50},
+  {nome:'Castelo Branco',rod:'SP-280',estados:['SP'],base:3.90},{nome:'Imigrantes/Anchieta',rod:'SP-160',estados:['SP'],base:5.20},
+  {nome:'Washington Luís',rod:'BR-040',estados:['RJ','MG'],base:3.20},{nome:'BR-050',rod:'BR-050',estados:['GO','MG'],base:2.80},
+  {nome:'BR-060',rod:'BR-060',estados:['DF','GO'],base:2.50},{nome:'BR-116 PR',rod:'BR-116',estados:['PR'],base:3.10},
+  {nome:'BR-277',rod:'BR-277',estados:['PR'],base:2.90},{nome:'BR-376',rod:'BR-376',estados:['PR'],base:3.00},
+  {nome:'BR-101 SC',rod:'BR-101',estados:['SC'],base:2.70},{nome:'BR-290 RS',rod:'BR-290',estados:['RS'],base:2.60},
+  {nome:'BR-116 RS',rod:'BR-116RS',estados:['RS'],base:2.40},{nome:'BR-153',rod:'BR-153',estados:['GO','TO'],base:2.20},
+  {nome:'BR-163',rod:'BR-163',estados:['MT','MS'],base:2.00},{nome:'BR-364',rod:'BR-364',estados:['MT','RO'],base:1.80},
+];
+function fatEixo(e){return{2:1,3:1.5,4:2.0,5:2.5,6:3.0,7:3.5,8:4.0,9:4.5}[e]||3.0;}
+function fmt(v){return'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtKm(v){return Number(v||0).toLocaleString('pt-BR')+' km';}
+function toast(m,t='ok'){const e=document.getElementById('toast');e.textContent=m;e.className=t;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){user=session.user;showApp();}else showAuth();
+  sb.auth.onAuthStateChange((ev,s)=>{if(s){user=s.user;showApp();}else{user=null;showAuth();}});
+}
+function showAuth(){document.getElementById('auth-wrap').style.display='flex';document.getElementById('app-wrap').style.display='none';}
+async function showApp(){
+  document.getElementById('auth-wrap').style.display='none';document.getElementById('app-wrap').style.display='block';
+  const e=user.email;document.getElementById('sb-email').textContent=e;document.getElementById('sb-av').textContent=e[0].toUpperCase();
+  const hoje=new Date();
+  document.getElementById('dash-dt').textContent=hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  const mes=hoje.toISOString().slice(0,7);
+  ['f-dt','cv-dt','a-dt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoje.toISOString().slice(0,10);});
+  ['fin-mes','rel-mes','cf-mes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=mes;});
+  await loadAll();
+}
+async function login(){
+  const email=document.getElementById('l-email').value,senha=document.getElementById('l-senha').value;
+  if(!email||!senha)return amsg('Preencha e-mail e senha.','err');
+  const{error}=await sb.auth.signInWithPassword({email,password:senha});
+  if(error)amsg('E-mail ou senha incorretos.','err');
+}
+async function register(){
+  const nome=document.getElementById('r-nome').value,email=document.getElementById('r-email').value,senha=document.getElementById('r-senha').value;
+  if(!nome||!email||!senha)return amsg('Preencha todos os campos.','err');
+  if(senha.length<6)return amsg('Senha mínimo 6 caracteres.','err');
+  const{error}=await sb.auth.signUp({email,password:senha,options:{data:{nome}}});
+  if(error)amsg('Erro: '+error.message,'err');else amsg('Conta criada! Faça login.','ok');
+}
+async function logout(){await sb.auth.signOut();}
+function tog(t){document.getElementById('f-login').style.display=t==='login'?'block':'none';document.getElementById('f-reg').style.display=t==='reg'?'block':'none';document.getElementById('amsg').style.display='none';}
+function amsg(m,t){const e=document.getElementById('amsg');e.textContent=m;e.className='amsg '+t;e.style.display='block';}
+
+async function loadAll(){
+  const uid=user.id;
+  const[rc,rm,rf,rg,ra,rco,rmt]=await Promise.all([
+    sb.from('caminhoes').select('*').eq('user_id',uid).order('created_at'),
+    sb.from('motoristas').select('*').eq('user_id',uid).order('created_at'),
+    sb.from('fretes').select('*').eq('user_id',uid).order('data',{ascending:false}),
+    sb.from('gastos').select('*').eq('user_id',uid).order('created_at',{ascending:false}),
+    sb.from('abastecimentos').select('*').eq('user_id',uid).order('data',{ascending:false}),
+    sb.from('contas_receber').select('*').eq('user_id',uid).order('data_vencimento'),
+    sb.from('metas').select('*').eq('user_id',uid)
+  ]);
+  caminhoes=rc.data||[];motoristas=rm.data||[];fretes=rf.data||[];gastos=rg.data||[];
+  abastecimentos=ra.data||[];contas=rco.data||[];metas=rmt.data||[];
+  renderSelects();renderDashboard();renderCaminhoes();renderMotoristas();
+  renderFretes();renderGastos();renderAbast();renderContas();
+  renderFinanceiro();renderRelatorio();renderComissoes();renderROI();renderHistRotas();
+}
+
+function renderSelects(){
+  const opts=caminhoes.map(c=>`<option value="${c.id}">${c.placa} — ${c.modelo}</option>`).join('');
+  const om=motoristas.map(m=>`<option value="${m.id}">${m.nome}</option>`).join('');
+  ['f-cam','rt-cam','a-cam'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts||'<option>Cadastre um caminhão</option>';});
+  ['f-mot','a-mot'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">Sem motorista</option>'+om;});
+  ['cf-cam','cv-cam'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">Geral</option>'+opts;});
+  ['ff-cam','gf-cam','af-cam'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">Todos os caminhões</option>'+opts;});
+}
+
+function renderDashboard(){
+  const mes=new Date().toISOString().slice(0,7);
+  const fM=fretes.filter(f=>f.data&&f.data.startsWith(mes));
+  const gM=gastos.filter(g=>(g.mes||'').startsWith(mes));
+  const rec=fM.reduce((a,f)=>a+Number(f.valor||0),0);
+  const gst=gM.reduce((a,g)=>a+Number(g.valor||0),0);
+  const luc=rec-gst;const km=fM.reduce((a,f)=>a+Number(f.km||0),0);
+  const pend=contas.filter(c=>c.status==='Pendente'||c.status==='Atrasado').reduce((a,c)=>a+Number(c.valor||0),0);
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Receita este mês</div><div class="sc-val g">${fmt(rec)}</div></div>
+    <div class="sc"><div class="sc-lbl">Gastos este mês</div><div class="sc-val r">${fmt(gst)}</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro este mês</div><div class="sc-val ${luc>=0?'g':'r'}">${fmt(luc)}</div></div>
+    <div class="sc"><div class="sc-lbl">A receber</div><div class="sc-val a">${fmt(pend)}</div></div>
+    <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val b">${fmtKm(km)}</div></div>
+    <div class="sc"><div class="sc-lbl">Caminhões</div><div class="sc-val b">${caminhoes.length}</div></div>`;
+  const metaMes=metas.find(m=>m.mes===mes);
+  const metaDash=document.getElementById('meta-dash');
+  if(metaMes){
+    const pct=Math.min(100,Math.round((rec/metaMes.meta_faturamento)*100));
+    metaDash.innerHTML=`<div class="meta-box"><div class="meta-header"><div class="meta-title">🎯 Meta — ${new Date(mes+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div><div class="meta-pct" style="color:${pct>=100?'var(--green)':'var(--accent)'}">${pct}%</div></div><div style="font-size:12px;color:var(--text2);margin-bottom:7px">${fmt(rec)} de ${fmt(metaMes.meta_faturamento)} ${pct>=100?'✅ Meta atingida!':'— falta '+fmt(metaMes.meta_faturamento-rec)}</div><div class="prog-lg"><div class="prog-f" style="width:${pct}%;background:${pct>=100?'var(--green)':'var(--accent)'}"></div></div></div>`;
+  }else metaDash.innerHTML='';
+  document.getElementById('dash-fr').innerHTML=fretes.slice(0,5).map(f=>{
+    const c=caminhoes.find(x=>x.id===f.caminhao_id);
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">${f.origem||'—'} → ${f.destino||'—'}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${c?c.placa:'—'} · ${f.data||''}</div></div><div style="font-size:13px;font-weight:700;color:var(--green)">${fmt(f.valor)}</div></div>`;
+  }).join('')||'<div class="empty">Nenhum frete ainda</div>';
+  const cp=contas.filter(c=>c.status==='Pendente'||c.status==='Atrasado').slice(0,5);
+  document.getElementById('dash-contas').innerHTML=cp.length?cp.map(c=>{
+    const v=c.data_vencimento?new Date(c.data_vencimento):null;
+    const dias=v?Math.ceil((v-new Date())/(864e5)):null;
+    const cor=dias!==null&&dias<0?'var(--red)':dias!==null&&dias<=3?'var(--amber)':'var(--text2)';
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">${c.cliente||'—'}</div><div style="font-size:11px;color:${cor};margin-top:1px">${dias!==null?(dias<0?'Atrasado '+Math.abs(dias)+'d':dias===0?'Vence hoje':'Vence em '+dias+'d'):'—'}</div></div><div style="font-size:13px;font-weight:700;color:var(--amber)">${fmt(c.valor)}</div></div>`;
+  }).join(''):'<div class="empty">Nenhuma conta pendente ✅</div>';
+  document.getElementById('dash-abast').innerHTML=abastecimentos.slice(0,4).map(a=>{
+    const c=caminhoes.find(x=>x.id===a.caminhao_id);
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">${c?c.placa:'—'} · ${a.posto||'—'}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${a.data||''} · ${a.litros||0}L</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">${fmt(a.valor_total)}</div>${a.kml_real?`<div style="font-size:10px;color:var(--text3)">${Number(a.kml_real).toFixed(2)} km/l</div>`:''}</div></div>`;
+  }).join('')||'<div class="empty">Nenhum abastecimento ainda</div>';
+}
+
+function initMap(){
+  if(map)return;
+  map=new google.maps.Map(document.getElementById('map'),{center:{lat:-15.77,lng:-47.93},zoom:5,styles:[{elementType:'geometry',stylers:[{color:'#1e2433'}]},{elementType:'labels.text.fill',stylers:[{color:'#8b92a8'}]},{elementType:'labels.text.stroke',stylers:[{color:'#1e2433'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2a3348'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#3b4a6b'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f1117'}]}]});
+  dirRenderer=new google.maps.DirectionsRenderer({map,polylineOptions:{strokeColor:'#3b7eff',strokeWeight:5}});
+}
+function calcRota(){
+  const orig=document.getElementById('rt-orig').value.trim(),dest=document.getElementById('rt-dest').value.trim();
+  if(!orig||!dest)return toast('Informe origem e destino.','err');
+  const eixos=parseInt(document.getElementById('rt-eixos').value);
+  const consumo=parseFloat(document.getElementById('rt-consumo').value)||3.5;
+  const diesel=parseFloat(document.getElementById('rt-diesel').value)||6.20;
+  const valFrete=parseFloat(document.getElementById('rt-valor').value)||0;
+  go('rota');
+  setTimeout(()=>{
+    initMap();
+    new google.maps.DirectionsService().route({origin:orig+', Brasil',destination:dest+', Brasil',travelMode:'DRIVING',region:'br'},(result,status)=>{
+      if(status!=='OK')return toast('Rota não encontrada. Use: Cidade, UF','err');
+      dirRenderer.setDirections(result);
+      const leg=result.routes[0].legs[0];
+      const distKm=leg.distance.value/1000,durMin=Math.round(leg.duration.value/60);
+      const litros=distKm/consumo,custoComb=litros*diesel;
+      const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
+      const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
+      const pedagios=estimarPedagios(estados,distKm,eixos);
+      const totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
+      const custoTotal=custoComb+totalPed;
+      rotaAtual={orig,dest,distKm,durMin,litros,custoComb,totalPed,custoTotal,valFrete,eixos,pedagios};
+      renderRota(rotaAtual);
+    });
+  },300);
+}
+function estimarPedagios(estados,distKm,eixos){
+  const fator=fatEixo(eixos),n=Math.max(1,Math.round(distKm/100*1.8));
+  let c=PEDAGIOS.filter(p=>estados.some(e=>p.estados.includes(e)));if(!c.length)c=PEDAGIOS;
+  return Array.from({length:n},(_,i)=>({nome:c[i%c.length].nome,rod:c[i%c.length].rod,valor:parseFloat((c[i%c.length].base*fator).toFixed(2))}));
+}
+function renderRota(r){
+  document.getElementById('rota-result').style.display='block';
+  const h=Math.floor(r.durMin/60),m=r.durMin%60;
+  document.getElementById('rota-cards').innerHTML=`
+    <div class="rr"><div class="rr-lbl">Distância</div><div class="rr-val b">${Math.round(r.distKm)} km</div></div>
+    <div class="rr"><div class="rr-lbl">Tempo</div><div class="rr-val">${h}h${m?m+'min':''}</div></div>
+    <div class="rr"><div class="rr-lbl">Combustível</div><div class="rr-val a">${fmt(r.custoComb)}</div></div>
+    <div class="rr"><div class="rr-lbl">Pedágios</div><div class="rr-val r">${fmt(r.totalPed)}</div></div>`;
+  document.getElementById('toll-list').innerHTML=r.pedagios.map((p,i)=>`<div class="toll-item"><div><div class="toll-name">Praça ${i+1} — ${p.rod}</div><div class="toll-road">${p.nome}</div></div><div class="toll-val">${fmt(p.valor)}</div></div>`).join('');
+  document.getElementById('toll-total').innerHTML=`<div style="display:flex;justify-content:space-between"><span style="font-size:12.5px;font-weight:600;color:var(--text)">Total (${r.eixos} eixos)</span><span style="font-size:15px;font-weight:700;color:var(--amber)">${fmt(r.totalPed)}</span></div>`;
+  const luc=r.valFrete>0?r.valFrete-r.custoTotal:null,mg=r.valFrete>0?((luc/r.valFrete)*100).toFixed(1):null;
+  document.getElementById('rota-analise').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:9px">
+    <div class="cc"><div class="cc-title">🛢️ Combustível</div><div class="cc-val">${fmt(r.custoComb)}</div><div class="cc-sub">${r.litros.toFixed(1)}L de diesel</div></div>
+    <div class="cc"><div class="cc-title">🛣️ Pedágios</div><div class="cc-val">${fmt(r.totalPed)}</div><div class="cc-sub">${r.pedagios.length} praças · ${r.eixos} eixos</div></div>
+    <div class="cc"><div class="cc-title">💸 Custo total</div><div class="cc-val" style="color:var(--red)">${fmt(r.custoTotal)}</div></div>
+    ${luc!==null?`<div class="cc"><div class="cc-title">✅ Lucro estimado</div><div class="cc-val" style="color:${luc>=0?'var(--green)':'var(--red)'}">${fmt(luc)}</div><div class="cc-sub">Margem: ${mg}%</div></div>`:`<div class="cc"><div class="cc-title">💡 Frete mínimo</div><div class="cc-val" style="color:var(--accent)">${fmt(r.custoTotal*1.3)}</div><div class="cc-sub">30% acima do custo</div></div>`}
+  </div>`;
+  renderHistRotas();
+}
+function registrarFreteDaRota(){
+  if(!rotaAtual)return;
+  document.getElementById('f-ori').value=rotaAtual.orig;document.getElementById('f-des').value=rotaAtual.dest;
+  document.getElementById('f-km').value=Math.round(rotaAtual.distKm);document.getElementById('f-ped').value=rotaAtual.totalPed.toFixed(2);
+  if(rotaAtual.valFrete>0)document.getElementById('f-val').value=rotaAtual.valFrete;
+  go('fretes');toast('Rota carregada!');
+}
+function renderHistRotas(){
+  const el=document.getElementById('hist-rotas');if(!el)return;
+  const rotas={};
+  fretes.filter(f=>f.origem&&f.destino&&f.status==='Concluído').forEach(f=>{
+    const k=f.origem+'|'+f.destino;
+    if(!rotas[k])rotas[k]={orig:f.origem,dest:f.destino,count:0,rec:0,ped:0,km:0};
+    rotas[k].count++;rotas[k].rec+=Number(f.valor||0);rotas[k].ped+=Number(f.pedagio||0);rotas[k].km+=Number(f.km||0);
+  });
+  const sorted=Object.values(rotas).sort((a,b)=>(b.rec-b.ped)-(a.rec-a.ped)).slice(0,8);
+  if(!sorted.length){el.innerHTML='<div class="empty">Registre fretes concluídos para ver o ranking</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>#</th><th>Rota</th><th>Viagens</th><th>Km médio</th><th>Receita total</th><th>Pedágios</th><th>Lucro bruto</th></tr></thead><tbody>`+
+  sorted.map((r,i)=>`<tr><td><strong>#${i+1}</strong></td><td><strong>${r.orig}</strong> → <strong>${r.dest}</strong></td><td>${r.count}</td><td>${r.km?fmtKm(r.km/r.count):'—'}</td><td style="color:var(--green);font-weight:600">${fmt(r.rec)}</td><td style="color:var(--amber)">${fmt(r.ped)}</td><td style="color:var(--green);font-weight:700">${fmt(r.rec-r.ped)}</td></tr>`).join('')+'</tbody></table>';
+}
+
+function renderCaminhoes(){
+  const el=document.getElementById('lista-cam');
+  if(!caminhoes.length){el.innerHTML='<div class="empty">Nenhum caminhão cadastrado</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Tipo</th><th>Eixos</th><th>Consumo</th><th>Status</th><th>Seguro</th><th></th></tr></thead><tbody>`+
+  caminhoes.map(c=>{
+    const sc={Disponível:'g','Em viagem':'b','Manutenção':'a'}[c.status]||'gr';
+    const seg=c.vencimento_seguro?(new Date(c.vencimento_seguro)<new Date()?`<span class="badge r">Vencido</span>`:`<span class="badge g">${c.vencimento_seguro}</span>`):'—';
+    return`<tr><td><strong>${c.placa}</strong></td><td>${c.modelo}</td><td>${c.ano||'—'}</td><td>${c.tipo}</td><td>${c.eixos||'—'}</td><td>${c.consumo_medio?c.consumo_medio+' km/l':'—'}</td><td><span class="badge ${sc}">${c.status}</span></td><td>${seg}</td><td><button class="btn-del" onclick="del('caminhoes','${c.id}')">🗑</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+async function salvarCaminhao(){
+  const placa=document.getElementById('c-pla').value.trim(),modelo=document.getElementById('c-mod').value.trim();
+  if(!placa||!modelo)return toast('Preencha placa e modelo.','err');
+  const{error}=await sb.from('caminhoes').insert({user_id:user.id,placa,modelo,ano:document.getElementById('c-ano').value,tipo:document.getElementById('c-tip').value,eixos:document.getElementById('c-eix').value,status:document.getElementById('c-st').value,consumo_medio:document.getElementById('c-cons').value||null,vencimento_seguro:document.getElementById('c-seg').value||null,obs:document.getElementById('c-obs').value});
+  if(error)return toast('Erro: '+error.message,'err');
+  ['c-pla','c-mod','c-ano','c-cons','c-seg','c-obs'].forEach(id=>document.getElementById(id).value='');
+  toast('Caminhão cadastrado!');await loadAll();
+}
+function renderROI(){
+  const el=document.getElementById('roi-cam');if(!el)return;
+  if(!caminhoes.length){el.innerHTML='<div class="empty">Sem caminhões</div>';return;}
+  el.innerHTML=caminhoes.map(c=>{
+    const recT=fretes.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.valor||0),0);
+    const gT=gastos.filter(g=>g.caminhao_id===c.id).reduce((a,g)=>a+Number(g.valor||0),0);
+    const lT=recT-gT;
+    const recM=fretes.filter(f=>f.caminhao_id===c.id&&f.data&&f.data.startsWith(new Date().toISOString().slice(0,7))).reduce((a,f)=>a+Number(f.valor||0),0);
+    return`<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:13.5px;font-weight:700;color:${lT>=0?'var(--green)':'var(--red)'}">${fmt(lT)} total</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Receita total</div><div class="sc-val g" style="font-size:14px">${fmt(recT)}</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Gastos total</div><div class="sc-val r" style="font-size:14px">${fmt(gT)}</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Este mês</div><div class="sc-val b" style="font-size:14px">${fmt(recM)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMotoristas(){
+  const el=document.getElementById('lista-mot');
+  if(!motoristas.length){el.innerHTML='<div class="empty">Nenhum motorista cadastrado</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Nome</th><th>Telefone</th><th>CNH</th><th>Venc. CNH</th><th>Salário</th><th>% Frete</th><th></th></tr></thead><tbody>`+
+  motoristas.map(m=>{
+    const v=m.vencimento_cnh?new Date(m.vencimento_cnh):null;
+    const dias=v?Math.ceil((v-new Date())/(864e5)):null;
+    const badge=dias!==null?(dias<0?'<span class="badge r">Vencida</span>':dias<30?`<span class="badge a">Vence ${dias}d</span>`:`<span class="badge g">${m.vencimento_cnh}</span>`):'—';
+    return`<tr><td><strong>${m.nome}</strong></td><td>${m.telefone||'—'}</td><td>${m.cnh||'—'}</td><td>${badge}</td><td>${m.salario?fmt(m.salario):'—'}</td><td>${m.pct_frete?m.pct_frete+'%':'—'}</td><td><button class="btn-del" onclick="del('motoristas','${m.id}')">🗑</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+async function salvarMotorista(){
+  const nome=document.getElementById('m-nom').value.trim();if(!nome)return toast('Informe o nome.','err');
+  const{error}=await sb.from('motoristas').insert({user_id:user.id,nome,telefone:document.getElementById('m-tel').value,cnh:document.getElementById('m-cnh').value,vencimento_cnh:document.getElementById('m-vcnh').value||null,salario:document.getElementById('m-sal').value||null,pct_frete:document.getElementById('m-pct').value||null,obs:document.getElementById('m-obs').value});
+  if(error)return toast('Erro: '+error.message,'err');
+  ['m-nom','m-tel','m-cnh','m-vcnh','m-sal','m-pct','m-obs'].forEach(id=>document.getElementById(id).value='');
+  toast('Motorista cadastrado!');await loadAll();
+}
+function renderComissoes(){
+  const mes=new Date().toISOString().slice(0,7);
+  const el=document.getElementById('comissoes');if(!el)return;
+  if(!motoristas.length){el.innerHTML='<div class="empty">Sem motoristas</div>';return;}
+  el.innerHTML=motoristas.map(m=>{
+    const fM=fretes.filter(f=>f.motorista_id===m.id&&f.data&&f.data.startsWith(mes));
+    const recMes=fM.reduce((a,f)=>a+Number(f.valor||0),0);
+    const com=m.pct_frete?recMes*(Number(m.pct_frete)/100):0;
+    const total=Number(m.salario||0)+com;
+    return`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${m.nome}</span><span style="font-size:13.5px;font-weight:700;color:var(--amber)">${fmt(total)}</span></div>
+      <div style="font-size:11px;color:var(--text3)">Fixo: ${fmt(m.salario||0)} + Comissão: ${fmt(com)} (${m.pct_frete||0}% de ${fmt(recMes)}) · ${fM.length} fretes</div>
+    </div>`;
+  }).join('');
+}
+
+function calcAbast(){
+  const l=parseFloat(document.getElementById('a-litros').value)||0;
+  const p=parseFloat(document.getElementById('a-preco').value)||0;
+  if(l&&p)document.getElementById('a-total').value=(l*p).toFixed(2);
+}
+async function salvarAbast(){
+  const cam=document.getElementById('a-cam').value,litros=document.getElementById('a-litros').value;
+  if(!cam)return toast('Selecione um caminhão.','err');if(!litros)return toast('Informe os litros.','err');
+  const km=document.getElementById('a-km').value;
+  let kml_real=null;
+  if(km){
+    const ults=abastecimentos.filter(a=>a.caminhao_id===cam&&a.km_atual).sort((a,b)=>new Date(b.data)-new Date(a.data));
+    if(ults.length>0){const diff=Number(km)-Number(ults[0].km_atual);if(diff>0&&Number(ults[0].litros)>0)kml_real=(diff/Number(ults[0].litros)).toFixed(2);}
+  }
+  const{error}=await sb.from('abastecimentos').insert({user_id:user.id,caminhao_id:cam,motorista_id:document.getElementById('a-mot').value||null,data:document.getElementById('a-dt').value,posto:document.getElementById('a-posto').value,litros,valor_litro:document.getElementById('a-preco').value||null,valor_total:document.getElementById('a-total').value||null,km_atual:km||null,kml_real,obs:document.getElementById('a-obs').value});
+  if(error)return toast('Erro: '+error.message,'err');
+  ['a-litros','a-preco','a-total','a-km','a-kml','a-posto','a-obs'].forEach(id=>document.getElementById(id).value='');
+  toast('Abastecimento registrado!');await loadAll();
+}
+function renderAbast(){
+  const fc=document.getElementById('af-cam').value,fm=document.getElementById('af-mes').value;
+  let data=abastecimentos.filter(a=>{if(fc&&a.caminhao_id!==fc)return false;if(fm&&a.data&&!a.data.startsWith(fm))return false;return true;});
+  const mes=new Date().toISOString().slice(0,7);
+  const aM=abastecimentos.filter(a=>a.data&&a.data.startsWith(mes));
+  const tL=aM.reduce((a,x)=>a+Number(x.litros||0),0);
+  const tV=aM.reduce((a,x)=>a+Number(x.valor_total||0),0);
+  const kls=aM.filter(a=>a.kml_real).map(a=>Number(a.kml_real));
+  const kMed=kls.length?kls.reduce((a,b)=>a+b,0)/kls.length:0;
+  document.getElementById('abast-resumo').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Litros este mês</div><div class="sc-val b">${tL.toFixed(1)}L</div></div>
+    <div class="sc"><div class="sc-lbl">Gasto combustível</div><div class="sc-val r">${fmt(tV)}</div></div>
+    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val ${kMed>3.5?'g':'a'}">${kMed?kMed.toFixed(2)+' km/l':'—'}</div></div>
+    <div class="sc"><div class="sc-lbl">Abastecimentos</div><div class="sc-val a">${aM.length}</div></div>`;
+  const byCam=document.getElementById('abast-por-cam');
+  byCam.innerHTML=caminhoes.length?caminhoes.map(c=>{
+    const ac=abastecimentos.filter(a=>a.caminhao_id===c.id);
+    const lt=ac.reduce((a,x)=>a+Number(x.litros||0),0);
+    const vl=ac.reduce((a,x)=>a+Number(x.valor_total||0),0);
+    const kls2=ac.filter(a=>a.kml_real).map(a=>Number(a.kml_real));
+    const km2=kls2.length?kls2.reduce((a,b)=>a+b,0)/kls2.length:0;
+    const ref=c.consumo_medio?Number(c.consumo_medio):null;
+    return`<div style="padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:12px;color:var(--text2)">${lt.toFixed(1)}L · ${fmt(vl)}</span></div>
+      <div style="font-size:11.5px;color:var(--text3)">Km/l real: <strong style="color:${km2&&ref?(km2>=ref?'var(--green)':'var(--red)'):'var(--text)'}">${km2?km2.toFixed(2):'—'}</strong>${ref?' · Estimado: '+ref:''} ${km2&&ref?(km2>=ref?' ✅':' ⚠️ Abaixo do esperado'):''}
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty">Sem caminhões</div>';
+  const el=document.getElementById('lista-abast');
+  if(!data.length){el.innerHTML='<div class="empty">Nenhum abastecimento encontrado</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Posto</th><th>Litros</th><th>R$/L</th><th>Total</th><th>Km odôm.</th><th>Km/L real</th><th></th></tr></thead><tbody>`+
+  data.map(a=>{
+    const c=caminhoes.find(x=>x.id===a.caminhao_id);
+    const ref=c&&c.consumo_medio?Number(c.consumo_medio):null;
+    const kml=a.kml_real?Number(a.kml_real):null;
+    const kb=kml?(ref?(kml>=ref?`<span class="badge g">${kml.toFixed(2)}</span>`:`<span class="badge r">${kml.toFixed(2)}</span>`):kml.toFixed(2)):'—';
+    return`<tr><td>${a.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${a.posto||'—'}</td><td>${a.litros||'—'}L</td><td>${a.valor_litro?fmt(a.valor_litro):'—'}</td><td style="color:var(--accent);font-weight:600">${a.valor_total?fmt(a.valor_total):'—'}</td><td>${a.km_atual?Number(a.km_atual).toLocaleString('pt-BR'):'—'}</td><td>${kb}</td><td><button class="btn-del" onclick="del('abastecimentos','${a.id}')">🗑</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+function renderFretes(){
+  const fc=document.getElementById('ff-cam').value,fs=document.getElementById('ff-st').value,fm=document.getElementById('ff-mes').value;
+  let data=fretes.filter(f=>{if(fc&&f.caminhao_id!==fc)return false;if(fs&&f.status!==fs)return false;if(fm&&f.data&&!f.data.startsWith(fm))return false;return true;});
+  const el=document.getElementById('lista-fretes');
+  if(!data.length){el.innerHTML='<div class="empty">Nenhum frete encontrado</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Motorista</th><th>Rota</th><th>Km</th><th>Pedágio</th><th>Valor</th><th>Pagamento</th><th>Status</th><th></th></tr></thead><tbody>`+
+  data.map(f=>{
+    const c=caminhoes.find(x=>x.id===f.caminhao_id),m=motoristas.find(x=>x.id===f.motorista_id);
+    const ss={Concluído:'g','Em andamento':'b',Aguardando:'a'}[f.status]||'gr';
+    const ps={Pago:'g',Pendente:'a',Parcial:'b'}[f.status_pagamento]||'gr';
+    return`<tr><td>${f.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${m?m.nome:'—'}</td><td><strong>${f.origem||'—'}</strong>→<strong>${f.destino||'—'}</strong></td><td>${f.km?fmtKm(f.km):'—'}</td><td style="color:var(--amber)">${f.pedagio?fmt(f.pedagio):'—'}</td><td style="color:var(--green);font-weight:700">${fmt(f.valor)}</td><td><span class="badge ${ps}">${f.status_pagamento||'—'}</span></td><td><span class="badge ${ss}">${f.status}</span></td><td><button class="btn-del" onclick="del('fretes','${f.id}')">🗑</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+async function salvarFrete(){
+  const valor=document.getElementById('f-val').value,cam=document.getElementById('f-cam').value;
+  if(!valor)return toast('Informe o valor.','err');if(!cam)return toast('Selecione um caminhão.','err');
+  const pag=document.getElementById('f-pag').value;
+  const{error}=await sb.from('fretes').insert({user_id:user.id,caminhao_id:cam,motorista_id:document.getElementById('f-mot').value||null,data:document.getElementById('f-dt').value,origem:document.getElementById('f-ori').value,destino:document.getElementById('f-des').value,valor,km:document.getElementById('f-km').value||null,carga:document.getElementById('f-carg').value,cliente:document.getElementById('f-cli').value,pedagio:document.getElementById('f-ped').value||null,status:document.getElementById('f-st').value,status_pagamento:pag,obs:document.getElementById('f-obs').value});
+  if(error)return toast('Erro: '+error.message,'err');
+  if(pag==='Pendente'){
+    const cli=document.getElementById('f-cli').value,venc=document.getElementById('f-venc').value;
+    if(cli)await sb.from('contas_receber').insert({user_id:user.id,cliente:cli,valor,data_vencimento:venc||null,status:'Pendente'});
+  }
+  ['f-ori','f-des','f-val','f-km','f-carg','f-cli','f-ped','f-obs','f-venc'].forEach(id=>document.getElementById(id).value='');
+  toast('Frete registrado!');await loadAll();
+}
+
+function renderContas(){
+  const fs=document.getElementById('cf-st2').value;
+  const data=contas.filter(c=>!fs||c.status===fs);
+  const pend=contas.filter(c=>c.status==='Pendente').reduce((a,c)=>a+Number(c.valor||0),0);
+  const atras=contas.filter(c=>c.status==='Atrasado').reduce((a,c)=>a+Number(c.valor||0),0);
+  const rec=contas.filter(c=>c.status==='Recebido').reduce((a,c)=>a+Number(c.valor||0),0);
+  document.getElementById('contas-stats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Pendente</div><div class="sc-val a">${fmt(pend)}</div></div>
+    <div class="sc"><div class="sc-lbl">Atrasado</div><div class="sc-val r">${fmt(atras)}</div></div>
+    <div class="sc"><div class="sc-lbl">Recebido</div><div class="sc-val g">${fmt(rec)}</div></div>
+    <div class="sc"><div class="sc-lbl">Total contas</div><div class="sc-val b">${contas.length}</div></div>`;
+  const el=document.getElementById('lista-contas');
+  if(!data.length){el.innerHTML='<div class="empty">Nenhuma conta encontrada</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Cliente</th><th>Valor</th><th>Vencimento</th><th>Situação</th><th>Status</th><th>Ação</th><th></th></tr></thead><tbody>`+
+  data.map(c=>{
+    const v=c.data_vencimento?new Date(c.data_vencimento):null;
+    const dias=v?Math.ceil((v-new Date())/(864e5)):null;
+    const sit=dias!==null?(dias<0?`<span class="badge r">Atrasado ${Math.abs(dias)}d</span>`:dias===0?`<span class="badge a">Vence hoje</span>`:`<span class="badge g">Vence em ${dias}d</span>`):'—';
+    const ss={Pendente:'a',Recebido:'g',Parcial:'b',Atrasado:'r'}[c.status]||'gr';
+    return`<tr><td><strong>${c.cliente||'—'}</strong></td><td style="color:var(--amber);font-weight:700">${fmt(c.valor)}</td><td>${c.data_vencimento||'—'}</td><td>${sit}</td><td><span class="badge ${ss}">${c.status}</span></td><td><button class="btn-s gn" style="padding:3px 9px;font-size:11px" onclick="marcarRecebido('${c.id}')">✅ Recebido</button></td><td><button class="btn-del" onclick="del('contas_receber','${c.id}')">🗑</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+async function salvarConta(){
+  const valor=document.getElementById('cr-val').value;if(!valor)return toast('Informe o valor.','err');
+  const{error}=await sb.from('contas_receber').insert({user_id:user.id,cliente:document.getElementById('cr-cli').value,valor,data_vencimento:document.getElementById('cr-venc').value||null,status:document.getElementById('cr-st').value,obs:document.getElementById('cr-obs').value});
+  if(error)return toast('Erro: '+error.message,'err');
+  ['cr-cli','cr-val','cr-venc','cr-obs'].forEach(id=>document.getElementById(id).value='');
+  toast('Conta registrada!');await loadAll();
+}
+async function marcarRecebido(id){
+  const{error}=await sb.from('contas_receber').update({status:'Recebido',data_recebimento:new Date().toISOString().slice(0,10)}).eq('id',id);
+  if(error)return toast('Erro.','err');toast('Marcado como recebido!');await loadAll();
+}
+
+async function salvarGasto(tipo){
+  const catId=tipo==='fixo'?'cf-cat':'cv-cat',valId=tipo==='fixo'?'cf-val':'cv-val',camId=tipo==='fixo'?'cf-cam':'cv-cam',descId=tipo==='fixo'?'cf-desc':'cv-desc';
+  const valor=document.getElementById(valId).value;if(!valor)return toast('Informe o valor.','err');
+  const mesRef=tipo==='fixo'?document.getElementById('cf-mes').value:document.getElementById('cv-dt').value.slice(0,7);
+  const dataVal=tipo==='fixo'?mesRef+'-01':document.getElementById('cv-dt').value;
+  const{error}=await sb.from('gastos').insert({user_id:user.id,caminhao_id:document.getElementById(camId).value||null,categoria:document.getElementById(catId).value,tipo,valor,descricao:document.getElementById(descId).value,data:dataVal,mes:mesRef});
+  if(error)return toast('Erro: '+error.message,'err');
+  [valId,descId].forEach(id=>document.getElementById(id).value='');
+  toast('Gasto registrado!');await loadAll();
+}
+function renderGastos(){
+  const fc=document.getElementById('gf-cam').value,ft=document.getElementById('gf-tip').value,fm=document.getElementById('gf-mes').value;
+  const data=gastos.filter(g=>{if(fc&&g.caminhao_id!==fc)return false;if(ft&&g.tipo!==ft)return false;if(fm&&(g.mes||'').slice(0,7)!==fm)return false;return true;});
+  const el=document.getElementById('lista-gastos');
+  if(!data.length){el.innerHTML='<div class="empty">Nenhum gasto encontrado</div>';return;}
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Caminhão</th><th>Descrição</th><th>Valor</th><th></th></tr></thead><tbody>`+
+  data.map(g=>{const c=caminhoes.find(x=>x.id===g.caminhao_id);const tt=g.tipo==='fixo'?'<span class="badge b">Fixo</span>':'<span class="badge a">Variável</span>';return`<tr><td>${g.data||g.mes||'—'}</td><td>${tt}</td><td>${g.categoria}</td><td>${c?c.placa:'Geral'}</td><td style="color:var(--text2)">${g.descricao||'—'}</td><td style="color:var(--red);font-weight:700">${fmt(g.valor)}</td><td><button class="btn-del" onclick="del('gastos','${g.id}')">🗑</button></td></tr>`;}).join('')+'</tbody></table>';
+}
+
+async function salvarMeta(){
+  const mes=document.getElementById('fin-mes').value,val=document.getElementById('meta-val').value;
+  if(!val)return toast('Informe a meta.','err');
+  const exist=metas.find(m=>m.mes===mes);
+  if(exist)await sb.from('metas').update({meta_faturamento:val}).eq('id',exist.id);
+  else await sb.from('metas').insert({user_id:user.id,mes,meta_faturamento:val});
+  toast('Meta salva!');await loadAll();
+}
+
+function finTab(t){
+  document.querySelectorAll('.fin-tab').forEach((b,i)=>{b.classList.toggle('on',['fix','var','km','cam'][i]===t);});
+  document.querySelectorAll('.fin-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('fin-'+t).classList.add('on');
+}
+function renderFinanceiro(){
+  const mes=document.getElementById('fin-mes').value;
+  const fM=fretes.filter(f=>f.data&&f.data.startsWith(mes));
+  const gM=gastos.filter(g=>(g.mes||'').slice(0,7)===mes);
+  const rec=fM.reduce((a,f)=>a+Number(f.valor||0),0);
+  const gFix=gM.filter(g=>g.tipo==='fixo').reduce((a,g)=>a+Number(g.valor||0),0);
+  const gVar=gM.filter(g=>g.tipo==='variavel').reduce((a,g)=>a+Number(g.valor||0),0);
+  const gTot=gFix+gVar;const luc=rec-gTot;const km=fM.reduce((a,f)=>a+Number(f.km||0),0);
+  const ckm=km>0?(gTot/km):0;const mg=rec>0?((luc/rec)*100).toFixed(1):0;
+  const metaMes=metas.find(m=>m.mes===mes);
+  const mf=document.getElementById('meta-fin');
+  if(metaMes){
+    const pct=Math.min(100,Math.round((rec/metaMes.meta_faturamento)*100));
+    mf.style.display='block';
+    mf.innerHTML=`<div class="meta-header"><div class="meta-title">🎯 Meta: ${fmt(metaMes.meta_faturamento)}</div><div class="meta-pct" style="color:${pct>=100?'var(--green)':'var(--accent)'}">${pct}%</div></div><div style="font-size:12px;color:var(--text2);margin-bottom:7px">${fmt(rec)} faturado ${pct>=100?'✅ Meta atingida!':'— falta '+fmt(metaMes.meta_faturamento-rec)}</div><div class="prog-lg"><div class="prog-f" style="width:${pct}%;background:${pct>=100?'var(--green)':'var(--accent)'}"></div></div>`;
+    document.getElementById('meta-val').value=metaMes.meta_faturamento;
+  }else mf.style.display='none';
+  document.getElementById('fin-stats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Receita</div><div class="sc-val g">${fmt(rec)}</div></div>
+    <div class="sc"><div class="sc-lbl">Custos fixos</div><div class="sc-val r">${fmt(gFix)}</div></div>
+    <div class="sc"><div class="sc-lbl">Custos variáveis</div><div class="sc-val a">${fmt(gVar)}</div></div>
+    <div class="sc"><div class="sc-lbl">Total gastos</div><div class="sc-val r">${fmt(gTot)}</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro líquido</div><div class="sc-val ${luc>=0?'g':'r'}">${fmt(luc)}</div></div>
+    <div class="sc"><div class="sc-lbl">Custo/km</div><div class="sc-val b">${fmt(ckm)}</div></div>`;
+  document.getElementById('pe-box').innerHTML=`<div class="pe-lbl">Ponto de equilíbrio mensal</div><div class="pe-val">${fmt(gTot)}</div><div class="pe-sub">${luc>=0?`✅ Superou em ${fmt(luc)} · Margem: ${mg}%`:`⚠️ Falta ${fmt(Math.abs(luc))} para cobrir os custos`}</div>`;
+  const meses=[];for(let i=3;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);meses.push(d.toISOString().slice(0,7));}
+  document.getElementById('comparativo').innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px">`+meses.map(m=>{
+    const rx=fretes.filter(f=>f.data&&f.data.startsWith(m)).reduce((a,f)=>a+Number(f.valor||0),0);
+    const gx=gastos.filter(g=>(g.mes||'').slice(0,7)===m).reduce((a,g)=>a+Number(g.valor||0),0);
+    const lx=rx-gx;
+    const label=new Date(m+'-01').toLocaleDateString('pt-BR',{month:'short',year:'2-digit'});
+    return`<div class="sc" style="text-align:center"><div class="sc-lbl">${label}</div><div class="sc-val ${lx>=0?'g':'r'}" style="font-size:15px">${fmt(lx)}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${fmt(rx)} rec.</div></div>`;
+  }).join('')+'</div>';
+  document.getElementById('fin-fix-lista').innerHTML=gM.filter(g=>g.tipo==='fixo').map(g=>{const c=caminhoes.find(x=>x.id===g.caminhao_id);return`<div class="cc"><div style="display:flex;justify-content:space-between"><div><div class="cc-title">${g.categoria}</div><div class="cc-sub">${c?c.placa:'Geral'}${g.descricao?' · '+g.descricao:''}</div></div><div class="cc-val">${fmt(g.valor)}</div></div></div>`;}).join('')||'<div class="empty">Sem custos fixos</div>';
+  document.getElementById('fin-var-lista').innerHTML=gM.filter(g=>g.tipo==='variavel').map(g=>{const c=caminhoes.find(x=>x.id===g.caminhao_id);return`<div class="cc"><div style="display:flex;justify-content:space-between"><div><div class="cc-title">${g.categoria}</div><div class="cc-sub">${c?c.placa:'Geral'}${g.data?' · '+g.data:''}${g.descricao?' · '+g.descricao:''}</div></div><div class="cc-val">${fmt(g.valor)}</div></div></div>`;}).join('')||'<div class="empty">Sem custos variáveis</div>';
+  document.getElementById('fin-km-lista').innerHTML=caminhoes.map(c=>{const kc=fM.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.km||0),0);const gc=gM.filter(g=>g.caminhao_id===c.id).reduce((a,g)=>a+Number(g.valor||0),0);const ck=kc>0?(gc/kc):0;return`<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:14px;font-weight:700;color:var(--accent)">${fmt(ck)}<span style="font-size:10px;font-weight:400;color:var(--text3)">/km</span></span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">${fmtKm(kc)} rodados · ${fmt(gc)} gastos</div></div>`;}).join('')||'<div class="empty">Sem dados</div>';
+  document.getElementById('fin-cam-lista').innerHTML=caminhoes.map(c=>{const r=fM.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.valor||0),0);const g=gM.filter(g=>g.caminhao_id===c.id).reduce((a,g)=>a+Number(g.valor||0),0);const l=r-g;const m2=r>0?((l/r)*100).toFixed(1):0;const pct=r>0?Math.min(100,Math.max(0,Math.round((l/r)*100))):0;return`<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:14px;font-weight:700;color:${l>=0?'var(--green)':'var(--red)'}">${fmt(l)}</span></div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Rec: ${fmt(r)} · Gastos: ${fmt(g)} · Margem: ${m2}%</div><div class="prog"><div class="prog-f" style="width:${pct}%;background:${l>=0?'var(--green)':'var(--red)'}"></div></div></div>`;}).join('')||'<div class="empty">Sem caminhões</div>';
+}
+
+function renderRelatorio(){
+  const mes=document.getElementById('rel-mes').value;
+  const fM=fretes.filter(f=>f.data&&f.data.startsWith(mes));
+  const gM=gastos.filter(g=>(g.mes||'').slice(0,7)===mes);
+  const rec=fM.reduce((a,f)=>a+Number(f.valor||0),0);const gst=gM.reduce((a,g)=>a+Number(g.valor||0),0);
+  const luc=rec-gst;const mg=rec>0?((luc/rec)*100).toFixed(1):0;const km=fM.reduce((a,f)=>a+Number(f.km||0),0);
+  document.getElementById('rel-stats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Receita</div><div class="sc-val g">${fmt(rec)}</div></div>
+    <div class="sc"><div class="sc-lbl">Gastos</div><div class="sc-val r">${fmt(gst)}</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro</div><div class="sc-val ${luc>=0?'g':'r'}">${fmt(luc)}</div></div>
+    <div class="sc"><div class="sc-lbl">Margem</div><div class="sc-val ${luc>=0?'g':'r'}">${mg}%</div></div>
+    <div class="sc"><div class="sc-lbl">Fretes</div><div class="sc-val b">${fM.length}</div></div>
+    <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val a">${fmtKm(km)}</div></div>`;
+  const cats={};gM.forEach(g=>{cats[g.categoria]=(cats[g.categoria]||0)+Number(g.valor||0);});
+  const catEl=document.getElementById('rel-cat');
+  if(!Object.keys(cats).length)catEl.innerHTML='<div class="empty">Sem gastos</div>';
+  else{const tot=Object.values(cats).reduce((a,b)=>a+b,0);catEl.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{const p=tot>0?Math.round((v/tot)*100):0;return`<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span style="color:var(--text)">${k}</span><span style="color:var(--red)">${fmt(v)} <span style="color:var(--text3)">(${p}%)</span></span></div><div class="prog"><div class="prog-f" style="width:${p}%;background:var(--red)"></div></div></div>`;}).join('');}
+  document.getElementById('rel-cam').innerHTML=caminhoes.map(c=>{const r=fM.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.valor||0),0);const g=gM.filter(g=>g.caminhao_id===c.id).reduce((a,g)=>a+Number(g.valor||0),0);const l=r-g;return`<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:13px;font-weight:700;color:${l>=0?'var(--green)':'var(--red)'}">${fmt(l)}</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Rec: ${fmt(r)} · Gastos: ${fmt(g)}</div></div>`;}).join('')||'<div class="empty">Sem dados</div>';
+  document.getElementById('rel-fr').innerHTML=fM.length?`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Rota</th><th>Km</th><th>Pedágio</th><th>Valor</th><th>Pagamento</th><th>Status</th></tr></thead><tbody>`+fM.map(f=>{const c=caminhoes.find(x=>x.id===f.caminhao_id);const ss={Concluído:'g','Em andamento':'b',Aguardando:'a'}[f.status]||'gr';const ps={Pago:'g',Pendente:'a',Parcial:'b'}[f.status_pagamento]||'gr';return`<tr><td>${f.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${f.origem||'—'}→${f.destino||'—'}</td><td>${f.km?fmtKm(f.km):'—'}</td><td>${f.pedagio?fmt(f.pedagio):'—'}</td><td style="color:var(--green);font-weight:700">${fmt(f.valor)}</td><td><span class="badge ${ps}">${f.status_pagamento||'—'}</span></td><td><span class="badge ${ss}">${f.status}</span></td></tr>`;}).join('')+'</tbody></table>':'<div class="empty">Nenhum frete neste período</div>';
+}
+
+async function del(tab,id){
+  if(!confirm('Excluir?'))return;
+  const{error}=await sb.from(tab).delete().eq('id',id).eq('user_id',user.id);
+  if(error)return toast('Erro.','err');toast('Excluído.');await loadAll();
+}
+
+function go(sec){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nv').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sec-'+sec).classList.add('on');
+  const idx={dashboard:0,rota:1,fretes:2,caminhoes:3,motoristas:4,abastecimento:5,financeiro:6,contas:7,gastos:8,relatorios:9}[sec];
+  document.querySelectorAll('.nv')[idx].classList.add('on');
+  if(sec==='rota')setTimeout(()=>{if(!map)initMap();},200);
+  if(sec==='financeiro')renderFinanceiro();
+  if(sec==='relatorios')renderRelatorio();
+  if(sec==='abastecimento')renderAbast();
+  if(sec==='contas')renderContas();
+}
+
+(function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}`;s.async=true;document.head.appendChild(s);})();
+init();
+</script>
+</body>
+</html>
