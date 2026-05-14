@@ -647,6 +647,7 @@ async function calcRota(){
   const valFrete=parseFloat(document.getElementById('rt-valor').value)||0;
   go('rota');
   toast('Calculando rota e pedágios...','ok');
+  await waitForMaps();
   setTimeout(async()=>{
     initMap();
     // 1) Geocodifica origem e destino
@@ -1201,7 +1202,10 @@ async function exportarRelatorioPDF(){
   finally{btn.textContent='📄 Exportar PDF';btn.disabled=false;}
 }
 
-(function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}`;s.async=true;document.head.appendChild(s);})();
+window._mapsReady=false;window._mapsReadyCallbacks=[];
+window.onGoogleMapsReady=function(){window._mapsReady=true;window._mapsReadyCallbacks.forEach(fn=>fn());window._mapsReadyCallbacks=[];};
+function waitForMaps(){return new Promise(res=>{if(window._mapsReady)return res();window._mapsReadyCallbacks.push(res);});}
+(function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}&callback=onGoogleMapsReady`;s.async=true;document.head.appendChild(s);})();
 init();
 </script>
 
