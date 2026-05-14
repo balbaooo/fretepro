@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0048)file:///C:/Users/febal/Downloads/FretePro_1.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FretePro</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="./index_files/supabase-js@2"></script>
+<script src="./index_files/jspdf.umd.min.js.baixados"></script>
+<script src="./index_files/html2canvas.min.js.baixados"></script>
+<link href="./index_files/css2" rel="stylesheet">
 <style>
 :root{
   --bg:#101113;--bg2:#17181d;--bg3:#1d1f26;--bg4:#24262e;
@@ -204,9 +204,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .meta-title{font-size:14px;font-weight:700;color:var(--text);font-family:'Inter',sans-serif}
 .meta-pct{font-size:22px;font-weight:800;font-family:'Inter',sans-serif}
 </style>
-</head>
+<script src="./index_files/js" async=""></script><script type="text/javascript" charset="UTF-8" src="./index_files/common.js.baixados"></script><script type="text/javascript" charset="UTF-8" src="./index_files/util.js.baixados"></script><script src="./index_files/js(1)" async=""></script><script type="text/javascript" charset="UTF-8" src="./index_files/common(1).js.baixados"></script><script type="text/javascript" charset="UTF-8" src="./index_files/util(1).js.baixados"></script></head>
 <body>
-<div id="auth-wrap">
+<div id="auth-wrap" style="display: none;">
   <div class="auth-card">
     <div class="auth-logo"><div class="auth-icon">🚛</div><div class="auth-brand">Frete<span>Pro</span></div></div>
     <div id="amsg" class="amsg"></div>
@@ -216,7 +216,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="fg"><label>E-mail</label><input id="l-email" type="email" placeholder="seu@email.com"></div>
       <div class="fg"><label>Senha</label><input id="l-senha" type="password" placeholder="••••••••"></div>
       <button class="btn-auth" onclick="login()">Entrar</button>
-      <div class="auth-sw">Não tem conta? <a onclick="tog('reg')">Criar conta</a></div>
+      <div class="auth-sw">Não tem conta? <a onclick="tog(&#39;reg&#39;)">Criar conta</a></div>
     </div>
     <div id="f-reg" style="display:none">
       <div class="auth-title">Criar conta</div>
@@ -225,45 +225,51 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="fg"><label>E-mail</label><input id="r-email" type="email" placeholder="seu@email.com"></div>
       <div class="fg"><label>Senha</label><input id="r-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
       <button class="btn-auth" onclick="register()">Criar conta</button>
-      <div class="auth-sw">Já tem conta? <a onclick="tog('login')">Entrar</a></div>
+      <div class="auth-sw">Já tem conta? <a onclick="tog(&#39;login&#39;)">Entrar</a></div>
     </div>
   </div>
 </div>
 
-<div id="app-wrap">
+<div id="app-wrap" style="display: block;">
   <div class="sidebar">
     <div class="sb-logo"><div class="sb-icon">🚛</div><div class="sb-brand">Frete<span>Pro</span></div></div>
     <div style="flex:1;overflow-y:auto;padding-bottom:.5rem">
       <div class="sb-sec" style="margin-top:.5rem">Principal</div>
-      <div class="nv on" onclick="go('dashboard')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>Painel</div>
+      <div class="nv on" onclick="go(&#39;dashboard&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"></rect></svg>Painel</div>
       <div class="sb-sec">Operação</div>
-      <div class="nv" onclick="go('rota')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3" stroke-width="1.8"/><path stroke-width="1.8" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>Calculadora de Rota</div>
-      <div class="nv" onclick="go('fretes')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5" stroke-width="1.8"/><circle cx="18.5" cy="18.5" r="2.5" stroke-width="1.8"/></svg>Fretes</div>
-      <div class="nv" onclick="go('caminhoes')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="7" width="14" height="11" rx="1" stroke-width="1.8"/><path stroke-width="1.8" d="M16 10h4l2 3v4h-6V10z"/><circle cx="6" cy="20" r="2" stroke-width="1.8"/><circle cx="18" cy="20" r="2" stroke-width="1.8"/></svg>Caminhões</div>
-      <div class="nv" onclick="go('motoristas')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path stroke-width="1.8" d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Motoristas</div>
-      <div class="nv" onclick="go('abastecimento')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 22V8l9-6 9 6v14M9 22v-6h6v6"/></svg>Abastecimento</div>
+      <div class="nv" onclick="go(&#39;rota&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3" stroke-width="1.8"></circle><path stroke-width="1.8" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path></svg>Calculadora de Rota</div>
+      <div class="nv" onclick="go(&#39;fretes&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"></path><circle cx="5.5" cy="18.5" r="2.5" stroke-width="1.8"></circle><circle cx="18.5" cy="18.5" r="2.5" stroke-width="1.8"></circle></svg>Fretes</div>
+      <div class="nv" onclick="go(&#39;caminhoes&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="7" width="14" height="11" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M16 10h4l2 3v4h-6V10z"></path><circle cx="6" cy="20" r="2" stroke-width="1.8"></circle><circle cx="18" cy="20" r="2" stroke-width="1.8"></circle></svg>Caminhões</div>
+      <div class="nv" onclick="go(&#39;motoristas&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke-width="1.8"></circle><path stroke-width="1.8" d="M4 20c0-4 3.6-7 8-7s8 3 8 7"></path></svg>Motoristas</div>
+      <div class="nv" onclick="go(&#39;abastecimento&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 22V8l9-6 9 6v14M9 22v-6h6v6"></path></svg>Abastecimento</div>
       <div class="sb-sec">Financeiro</div>
-      <div class="nv" onclick="go('financeiro')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Financeiro</div>
-      <div class="nv" onclick="go('contas')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M9 14l2 2 4-4"/><rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.8"/></svg>Contas a Receber</div>
-      <div class="nv" onclick="go('gastos')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke-width="1.8"/><path stroke-width="1.8" d="M2 10h20"/></svg>Gastos</div>
-      <div class="nv" onclick="go('relatorios')"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M18 20V10M12 20V4M6 20v-6"/></svg>Relatórios</div>
+      <div class="nv" onclick="go(&#39;financeiro&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>Financeiro</div>
+      <div class="nv" onclick="go(&#39;contas&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M9 14l2 2 4-4"></path><rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.8"></rect></svg>Contas a Receber</div>
+      <div class="nv" onclick="go(&#39;gastos&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M2 10h20"></path></svg>Gastos</div>
+      <div class="nv" onclick="go(&#39;relatorios&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M18 20V10M12 20V4M6 20v-6"></path></svg>Relatórios</div>
     </div>
     <div class="sb-foot">
-      <div class="sb-user"><div class="sb-av" id="sb-av">?</div><div class="sb-email" id="sb-email">...</div></div>
+      <div class="sb-user"><div class="sb-av" id="sb-av">F</div><div class="sb-email" id="sb-email">febalbao@gmail.com</div></div>
       <button class="btn-out" onclick="logout()">Sair da conta</button>
     </div>
   </div>
 
   <div class="main">
     <div id="sec-dashboard" class="sec on">
-      <div class="pg-hdr"><div class="page-title">Painel</div><div class="page-sub" id="dash-dt"></div></div>
+      <div class="pg-hdr"><div class="page-title">Painel</div><div class="page-sub" id="dash-dt">quinta-feira, 14 de maio de 2026</div></div>
       <div id="meta-dash"></div>
-      <div class="sgrid" id="dash-stats"></div>
+      <div class="sgrid" id="dash-stats">
+    <div class="sc"><div class="sc-lbl">Receita este mês</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Gastos este mês</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro este mês</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">A receber</div><div class="sc-val a">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val b">0 km</div></div>
+    <div class="sc"><div class="sc-lbl">Caminhões</div><div class="sc-val b">1</div></div></div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title">🚛 Fretes recentes</div><div id="dash-fr"></div></div>
-        <div class="panel"><div class="panel-title">💳 Contas a receber</div><div id="dash-contas"></div></div>
+        <div class="panel"><div class="panel-title">🚛 Fretes recentes</div><div id="dash-fr"><div class="empty">Nenhum frete ainda</div></div></div>
+        <div class="panel"><div class="panel-title">💳 Contas a receber</div><div id="dash-contas"><div class="empty">Nenhuma conta pendente ✅</div></div></div>
       </div>
-      <div class="panel"><div class="panel-title">⛽ Últimos abastecimentos</div><div id="dash-abast"></div></div>
+      <div class="panel"><div class="panel-title">⛽ Últimos abastecimentos</div><div id="dash-abast"><div class="empty">Nenhum abastecimento ainda</div></div></div>
     </div>
 
     <div id="sec-rota" class="sec">
@@ -272,8 +278,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="panel-title">📍 Definir rota</div>
         <div class="fr"><div class="fld"><label>Origem (cidade, UF)</label><input id="rt-orig" placeholder="Ex: São Paulo, SP"></div><div class="fld"><label>Destino (cidade, UF)</label><input id="rt-dest" placeholder="Ex: Curitiba, PR"></div></div>
         <div class="fr t">
-          <div class="fld"><label>Caminhão</label><select id="rt-cam"></select></div>
-          <div class="fld"><label>Eixos</label><select id="rt-eixos"><option value="2">2 eixos</option><option value="3">3 eixos</option><option value="4">4 eixos (Toco)</option><option value="5">5 eixos</option><option value="6" selected>6 eixos (Truck)</option><option value="7">7 eixos</option><option value="8">8 eixos (Bitruck)</option><option value="9">9 eixos (Carreta)</option></select></div>
+          <div class="fld"><label>Caminhão</label><select id="rt-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div>
+          <div class="fld"><label>Eixos</label><select id="rt-eixos"><option value="2">2 eixos</option><option value="3">3 eixos</option><option value="4">4 eixos (Toco)</option><option value="5">5 eixos</option><option value="6" selected="">6 eixos (Truck)</option><option value="7">7 eixos</option><option value="8">8 eixos (Bitruck)</option><option value="9">9 eixos (Carreta)</option></select></div>
           <div class="fld"><label>Consumo (km/l)</label><input id="rt-consumo" type="number" value="3.5" step="0.1"></div>
         </div>
         <div class="fr"><div class="fld"><label>Preço diesel (R$/L)</label><input id="rt-diesel" type="number" value="6.20" step="0.01"></div><div class="fld"><label>Valor do frete (R$)</label><input id="rt-valor" type="number" placeholder="Opcional"></div></div>
@@ -295,14 +301,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <button class="btn-s gn" style="margin-top:.9rem" onclick="registrarFreteDaRota()">✅ Registrar este frete</button>
         </div>
       </div>
-      <div class="panel" style="margin-top:1.1rem"><div class="panel-title">📊 Rotas mais lucrativas</div><div id="hist-rotas"></div></div>
+      <div class="panel" style="margin-top:1.1rem"><div class="panel-title">📊 Rotas mais lucrativas</div><div id="hist-rotas"><div class="empty">Registre fretes concluídos para ver o ranking</div></div></div>
     </div>
 
     <div id="sec-fretes" class="sec">
       <div class="pg-hdr"><div class="page-title">Fretes</div><div class="page-sub">Registre e acompanhe suas viagens</div></div>
       <div class="panel">
         <div class="panel-title">➕ Registrar frete</div>
-        <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam"></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
+        <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="f-dt" type="date"></div><div class="fld"><label>Cliente</label><input id="f-cli" placeholder="Nome do cliente"></div></div>
         <div class="fr"><div class="fld"><label>Origem</label><input id="f-ori" placeholder="Cidade, Estado"></div><div class="fld"><label>Destino</label><input id="f-des" placeholder="Cidade, Estado"></div></div>
         <div class="fr t"><div class="fld"><label>Valor (R$)</label><input id="f-val" type="number" placeholder="0.00"></div><div class="fld"><label>Km rodados</label><input id="f-km" type="number" placeholder="0"></div><div class="fld"><label>Carga</label><input id="f-carg" placeholder="Ex: grãos..."></div></div>
@@ -317,11 +323,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="panel">
         <div class="panel-title">📋 Histórico</div>
         <div class="filt">
-          <select id="ff-cam" onchange="renderFretes()"><option value="">Todos os caminhões</option></select>
+          <select id="ff-cam" onchange="renderFretes()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
           <select id="ff-st" onchange="renderFretes()"><option value="">Todos os status</option><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select>
           <input type="month" id="ff-mes" onchange="renderFretes()">
         </div>
-        <div class="tbl-wrap"><div id="lista-fretes"></div></div>
+        <div class="tbl-wrap"><div id="lista-fretes"><div class="empty">Nenhum frete encontrado</div></div></div>
       </div>
     </div>
 
@@ -332,15 +338,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="fr t"><div class="fld"><label>Placa</label><input id="c-pla" placeholder="ABC-1234"></div><div class="fld"><label>Modelo</label><input id="c-mod" placeholder="Scania R450"></div><div class="fld"><label>Ano</label><input id="c-ano" type="number" placeholder="2022"></div></div>
         <div class="fr t">
           <div class="fld"><label>Tipo</label><select id="c-tip"><option>Truck (6 eixos)</option><option>Carreta (9 eixos)</option><option>Bitruck (8 eixos)</option><option>Toco (4 eixos)</option><option>Outro</option></select></div>
-          <div class="fld"><label>Eixos</label><select id="c-eix"><option value="4">4</option><option value="6" selected>6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></div>
+          <div class="fld"><label>Eixos</label><select id="c-eix"><option value="4">4</option><option value="6" selected="">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></div>
           <div class="fld"><label>Status</label><select id="c-st"><option>Disponível</option><option>Em viagem</option><option>Manutenção</option></select></div>
         </div>
         <div class="fr"><div class="fld"><label>Consumo médio (km/l)</label><input id="c-cons" type="number" placeholder="3.5" step="0.1"></div><div class="fld"><label>Vencimento seguro</label><input id="c-seg" type="date"></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><textarea id="c-obs"></textarea></div></div>
         <button class="btn-s" onclick="salvarCaminhao()">💾 Salvar</button>
       </div>
-      <div class="panel"><div class="panel-title">🚚 Frota</div><div class="tbl-wrap"><div id="lista-cam"></div></div></div>
-      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"></div></div>
+      <div class="panel"><div class="panel-title">🚚 Frota</div><div class="tbl-wrap"><div id="lista-cam"><table class="tbl"><thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Tipo</th><th>Eixos</th><th>Consumo</th><th>Status</th><th>Seguro</th><th></th></tr></thead><tbody><tr><td><strong>ABC2135</strong></td><td>SCANIA R450</td><td>2025</td><td>Carreta (9 eixos)</td><td>9</td><td>1.5 km/l</td><td><span class="badge g">Disponível</span></td><td><span class="badge g">2026-12-20</span></td><td><button class="btn-del" onclick="del(&#39;caminhoes&#39;,&#39;ef8d010c-1966-4e3f-820b-6d96749cda21&#39;)">🗑</button></td></tr></tbody></table></div></div></div>
+      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"><div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:13.5px;font-weight:700;color:var(--green)">R$ 0,00 total</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Receita total</div><div class="sc-val g" style="font-size:14px">R$ 0,00</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Gastos total</div><div class="sc-val r" style="font-size:14px">R$ 0,00</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Este mês</div><div class="sc-val b" style="font-size:14px">R$ 0,00</div></div>
+      </div>
+    </div></div></div>
     </div>
 
     <div id="sec-motoristas" class="sec">
@@ -353,34 +366,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="fr f"><div class="fld"><label>Observações</label><textarea id="m-obs"></textarea></div></div>
         <button class="btn-s" onclick="salvarMotorista()">💾 Salvar</button>
       </div>
-      <div class="panel"><div class="panel-title">👥 Motoristas</div><div class="tbl-wrap"><div id="lista-mot"></div></div></div>
-      <div class="panel"><div class="panel-title">💰 Comissões este mês</div><div id="comissoes"></div></div>
+      <div class="panel"><div class="panel-title">👥 Motoristas</div><div class="tbl-wrap"><div id="lista-mot"><div class="empty">Nenhum motorista cadastrado</div></div></div></div>
+      <div class="panel"><div class="panel-title">💰 Comissões este mês</div><div id="comissoes"><div class="empty">Sem motoristas</div></div></div>
     </div>
 
     <div id="sec-abastecimento" class="sec">
       <div class="pg-hdr"><div class="page-title">Abastecimento</div><div class="page-sub">Controle de combustível e consumo real</div></div>
       <div class="panel">
         <div class="panel-title">⛽ Registrar abastecimento</div>
-        <div class="fr"><div class="fld"><label>Caminhão</label><select id="a-cam"></select></div><div class="fld"><label>Motorista</label><select id="a-mot"><option value="">Sem motorista</option></select></div></div>
+        <div class="fr"><div class="fld"><label>Caminhão</label><select id="a-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="a-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="a-dt" type="date"></div><div class="fld"><label>Posto</label><input id="a-posto" placeholder="Nome do posto"></div></div>
         <div class="fr t">
           <div class="fld"><label>Litros</label><input id="a-litros" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
           <div class="fld"><label>Preço por litro (R$)</label><input id="a-preco" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
           <div class="fld"><label>Total (R$)</label><input id="a-total" type="number" placeholder="Calculado auto" step="0.01"></div>
         </div>
-        <div class="fr"><div class="fld"><label>Km atual (odômetro)</label><input id="a-km" type="number" placeholder="Ex: 125000"></div><div class="fld"><label>Km/L real (calculado)</label><input id="a-kml" readonly placeholder="Automático" style="opacity:.6"></div></div>
+        <div class="fr"><div class="fld"><label>Km atual (odômetro)</label><input id="a-km" type="number" placeholder="Ex: 125000"></div><div class="fld"><label>Km/L real (calculado)</label><input id="a-kml" readonly="" placeholder="Automático" style="opacity:.6"></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><input id="a-obs" placeholder="Notas..."></div></div>
         <button class="btn-s" onclick="salvarAbast()">💾 Salvar abastecimento</button>
       </div>
-      <div class="sgrid" id="abast-resumo"></div>
-      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"></div></div>
+      <div class="sgrid" id="abast-resumo">
+    <div class="sc"><div class="sc-lbl">Litros este mês</div><div class="sc-val b">0.0L</div></div>
+    <div class="sc"><div class="sc-lbl">Gasto combustível</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val a">—</div></div>
+    <div class="sc"><div class="sc-lbl">Abastecimentos</div><div class="sc-val a">0</div></div></div>
+      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"><div style="padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:12px;color:var(--text2)">0.0L · R$ 0,00</span></div>
+      <div style="font-size:11.5px;color:var(--text3)">Km/l real: <strong style="color:var(--text)">—</strong> · Estimado: 1.5 
+      </div>
+    </div></div></div>
       <div class="panel">
         <div class="panel-title">📋 Histórico</div>
         <div class="filt">
-          <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option></select>
+          <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
           <input type="month" id="af-mes" onchange="renderAbast()">
         </div>
-        <div class="tbl-wrap"><div id="lista-abast"></div></div>
+        <div class="tbl-wrap"><div id="lista-abast"><div class="empty">Nenhum abastecimento encontrado</div></div></div>
       </div>
     </div>
 
@@ -393,25 +414,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <button class="btn-s" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)" onclick="renderFinanceiro()">🔄</button>
       </div>
       <div class="meta-box" id="meta-fin" style="display:none"></div>
-      <div class="sgrid" id="fin-stats"></div>
-      <div class="pe-box" id="pe-box"></div>
-      <div class="panel"><div class="panel-title">📅 Comparativo — últimos 4 meses</div><div id="comparativo"></div></div>
+      <div class="sgrid" id="fin-stats">
+    <div class="sc"><div class="sc-lbl">Receita</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Custos fixos</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Custos variáveis</div><div class="sc-val a">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Total gastos</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro líquido</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Custo/km</div><div class="sc-val b">R$ 0,00</div></div></div>
+      <div class="pe-box" id="pe-box"><div class="pe-lbl">Ponto de equilíbrio mensal</div><div class="pe-val">R$ 0,00</div><div class="pe-sub">✅ Superou em R$ 0,00 · Margem: 0%</div></div>
+      <div class="panel"><div class="panel-title">📅 Comparativo — últimos 4 meses</div><div id="comparativo"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px"><div class="sc" style="text-align:center"><div class="sc-lbl">jan. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">fev. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">mar. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">abr. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div></div></div></div>
       <div class="fin-tabs">
-        <button class="fin-tab on" onclick="finTab('fix')">Custos fixos</button>
-        <button class="fin-tab" onclick="finTab('var')">Custos variáveis</button>
-        <button class="fin-tab" onclick="finTab('km')">Custo por Km</button>
-        <button class="fin-tab" onclick="finTab('cam')">Por caminhão</button>
+        <button class="fin-tab on" onclick="finTab(&#39;fix&#39;)">Custos fixos</button>
+        <button class="fin-tab" onclick="finTab(&#39;var&#39;)">Custos variáveis</button>
+        <button class="fin-tab" onclick="finTab(&#39;km&#39;)">Custo por Km</button>
+        <button class="fin-tab" onclick="finTab(&#39;cam&#39;)">Por caminhão</button>
       </div>
       <div id="fin-fix" class="fin-panel on">
         <div class="two-col">
           <div class="panel">
             <div class="panel-title">➕ Custo fixo</div>
             <div class="fr"><div class="fld"><label>Categoria</label><select id="cf-cat"><option>IPVA</option><option>Seguro do caminhão</option><option>Financiamento / Parcela</option><option>Salário fixo motorista</option><option>Licenciamento</option><option>Contador</option><option>Telefone / Internet</option><option>Imposto</option><option>Outros fixos</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cf-val" type="number" placeholder="0.00"></div></div>
-            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cf-cam"><option value="">Geral</option></select></div><div class="fld"><label>Mês</label><input id="cf-mes" type="month"></div></div>
+            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cf-cam"><option value="">Geral</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Mês</label><input id="cf-mes" type="month"></div></div>
             <div class="fr f"><div class="fld"><label>Descrição</label><input id="cf-desc" placeholder="Detalhe..."></div></div>
-            <button class="btn-s" onclick="salvarGasto('fixo')">💾 Salvar</button>
+            <button class="btn-s" onclick="salvarGasto(&#39;fixo&#39;)">💾 Salvar</button>
           </div>
-          <div class="panel"><div class="panel-title">📊 Fixos do mês</div><div id="fin-fix-lista"></div></div>
+          <div class="panel"><div class="panel-title">📊 Fixos do mês</div><div id="fin-fix-lista"><div class="empty">Sem custos fixos</div></div></div>
         </div>
       </div>
       <div id="fin-var" class="fin-panel">
@@ -419,20 +446,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="panel">
             <div class="panel-title">➕ Custo variável</div>
             <div class="fr"><div class="fld"><label>Categoria</label><select id="cv-cat"><option>Combustível</option><option>Pedágio</option><option>Pneus / Recapagem</option><option>Manutenção preventiva</option><option>Manutenção corretiva</option><option>Lavagem</option><option>Alimentação motorista</option><option>Hospedagem / Diária</option><option>Ajuda de custo</option><option>Outros variáveis</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cv-val" type="number" placeholder="0.00"></div></div>
-            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cv-cam"><option value="">Geral</option></select></div><div class="fld"><label>Data</label><input id="cv-dt" type="date"></div></div>
+            <div class="fr"><div class="fld"><label>Caminhão</label><select id="cv-cam"><option value="">Geral</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Data</label><input id="cv-dt" type="date"></div></div>
             <div class="fr f"><div class="fld"><label>Descrição</label><textarea id="cv-desc"></textarea></div></div>
-            <button class="btn-s" onclick="salvarGasto('variavel')">💾 Salvar</button>
+            <button class="btn-s" onclick="salvarGasto(&#39;variavel&#39;)">💾 Salvar</button>
           </div>
-          <div class="panel"><div class="panel-title">📊 Variáveis do mês</div><div id="fin-var-lista"></div></div>
+          <div class="panel"><div class="panel-title">📊 Variáveis do mês</div><div id="fin-var-lista"><div class="empty">Sem custos variáveis</div></div></div>
         </div>
       </div>
-      <div id="fin-km" class="fin-panel"><div class="panel"><div class="panel-title">📏 Custo por Km</div><div id="fin-km-lista"></div></div></div>
-      <div id="fin-cam" class="fin-panel"><div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="fin-cam-lista"></div></div></div>
+      <div id="fin-km" class="fin-panel"><div class="panel"><div class="panel-title">📏 Custo por Km</div><div id="fin-km-lista"><div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--accent)">R$ 0,00<span style="font-size:10px;font-weight:400;color:var(--text3)">/km</span></span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">0 km rodados · R$ 0,00 gastos</div></div></div></div></div>
+      <div id="fin-cam" class="fin-panel"><div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="fin-cam-lista"><div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Rec: R$ 0,00 · Gastos: R$ 0,00 · Margem: 0%</div><div class="prog"><div class="prog-f" style="width:0%;background:var(--green)"></div></div></div></div></div></div>
     </div>
 
     <div id="sec-contas" class="sec">
       <div class="pg-hdr"><div class="page-title">Contas a Receber</div><div class="page-sub">Controle de pagamentos</div></div>
-      <div class="sgrid" id="contas-stats"></div>
+      <div class="sgrid" id="contas-stats">
+    <div class="sc"><div class="sc-lbl">Pendente</div><div class="sc-val a">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Atrasado</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Recebido</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Total contas</div><div class="sc-val b">0</div></div></div>
       <div class="panel">
         <div class="panel-title">➕ Nova conta</div>
         <div class="fr"><div class="fld"><label>Cliente</label><input id="cr-cli" placeholder="Nome do cliente"></div><div class="fld"><label>Valor (R$)</label><input id="cr-val" type="number" placeholder="0.00"></div></div>
@@ -443,7 +474,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="panel">
         <div class="panel-title">📋 Contas</div>
         <div class="filt"><select id="cf-st2" onchange="renderContas()"><option value="">Todos</option><option>Pendente</option><option>Recebido</option><option>Parcial</option><option>Atrasado</option></select></div>
-        <div class="tbl-wrap"><div id="lista-contas"></div></div>
+        <div class="tbl-wrap"><div id="lista-contas"><div class="empty">Nenhuma conta encontrada</div></div></div>
       </div>
     </div>
 
@@ -452,23 +483,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="panel">
         <div class="panel-title">📋 Todos os gastos</div>
         <div class="filt">
-          <select id="gf-cam" onchange="renderGastos()"><option value="">Todos os caminhões</option></select>
+          <select id="gf-cam" onchange="renderGastos()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
           <select id="gf-tip" onchange="renderGastos()"><option value="">Fixo e variável</option><option value="fixo">Fixos</option><option value="variavel">Variáveis</option></select>
           <input type="month" id="gf-mes" onchange="renderGastos()">
         </div>
-        <div class="tbl-wrap"><div id="lista-gastos"></div></div>
+        <div class="tbl-wrap"><div id="lista-gastos"><div class="empty">Nenhum gasto encontrado</div></div></div>
       </div>
     </div>
 
     <div id="sec-relatorios" class="sec">
       <div class="pg-hdr"><div class="page-title">Relatórios</div><div class="page-sub">Análise mensal completa</div></div>
       <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button><button class="btn-s" id="btn-export-pdf" onclick="exportarRelatorioPDF()" style="background:var(--accent);color:#fff;border:none">📄 Exportar PDF</button></div>
-      <div class="sgrid" id="rel-stats"></div>
+      <div class="sgrid" id="rel-stats">
+    <div class="sc"><div class="sc-lbl">Receita</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Gastos</div><div class="sc-val r">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Lucro</div><div class="sc-val g">R$ 0,00</div></div>
+    <div class="sc"><div class="sc-lbl">Margem</div><div class="sc-val g">0%</div></div>
+    <div class="sc"><div class="sc-lbl">Fretes</div><div class="sc-val b">0</div></div>
+    <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val a">0 km</div></div></div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title">📊 Gastos por categoria</div><div id="rel-cat"></div></div>
-        <div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="rel-cam"></div></div>
+        <div class="panel"><div class="panel-title">📊 Gastos por categoria</div><div id="rel-cat"><div class="empty">Sem gastos</div></div></div>
+        <div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="rel-cam"><div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Rec: R$ 0,00 · Gastos: R$ 0,00</div></div></div></div>
       </div>
-      <div class="panel"><div class="panel-title">🗓️ Fretes do período</div><div class="tbl-wrap"><div id="rel-fr"></div></div></div>
+      <div class="panel"><div class="panel-title">🗓️ Fretes do período</div><div class="tbl-wrap"><div id="rel-fr"><div class="empty">Nenhum frete neste período</div></div></div></div>
     </div>
   </div>
 </div>
@@ -482,17 +519,18 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 let user=null,caminhoes=[],motoristas=[],fretes=[],gastos=[],abastecimentos=[],contas=[],metas=[],map=null,dirRenderer=null,rotaAtual=null;
 
 const PEDAGIOS=[
-  {nome:'Fernão Dias',rod:'BR-381',estados:['SP','MG'],base:4.20},{nome:'Dutra',rod:'BR-116',estados:['SP','RJ'],base:3.80},
-  {nome:'Régis Bittencourt',rod:'BR-116S',estados:['SP','PR'],base:3.60},{nome:'Anhanguera/Bandeirantes',rod:'SP-330',estados:['SP'],base:4.50},
-  {nome:'Castelo Branco',rod:'SP-280',estados:['SP'],base:3.90},{nome:'Imigrantes/Anchieta',rod:'SP-160',estados:['SP'],base:5.20},
-  {nome:'Washington Luís',rod:'BR-040',estados:['RJ','MG'],base:3.20},{nome:'BR-050',rod:'BR-050',estados:['GO','MG'],base:2.80},
-  {nome:'BR-060',rod:'BR-060',estados:['DF','GO'],base:2.50},{nome:'BR-116 PR',rod:'BR-116',estados:['PR'],base:3.10},
-  {nome:'BR-277',rod:'BR-277',estados:['PR'],base:2.90},{nome:'BR-376',rod:'BR-376',estados:['PR'],base:3.00},
-  {nome:'BR-101 SC',rod:'BR-101',estados:['SC'],base:2.70},{nome:'BR-290 RS',rod:'BR-290',estados:['RS'],base:2.60},
-  {nome:'BR-116 RS',rod:'BR-116RS',estados:['RS'],base:2.40},{nome:'BR-153',rod:'BR-153',estados:['GO','TO'],base:2.20},
-  {nome:'BR-163',rod:'BR-163',estados:['MT','MS'],base:2.00},{nome:'BR-364',rod:'BR-364',estados:['MT','RO'],base:1.80},
+  {nome:'Fernão Dias',rod:'BR-381',estados:['SP','MG'],base:18.50},{nome:'Dutra',rod:'BR-116',estados:['SP','RJ'],base:16.80},
+  {nome:'Régis Bittencourt',rod:'BR-116S',estados:['SP','PR'],base:15.90},{nome:'Anhanguera/Bandeirantes',rod:'SP-330',estados:['SP'],base:19.80},
+  {nome:'Castelo Branco',rod:'SP-280',estados:['SP'],base:17.20},{nome:'Imigrantes/Anchieta',rod:'SP-160',estados:['SP'],base:22.50},
+  {nome:'Washington Luís',rod:'BR-040',estados:['RJ','MG'],base:14.10},{nome:'BR-050',rod:'BR-050',estados:['GO','MG'],base:12.30},
+  {nome:'BR-060',rod:'BR-060',estados:['DF','GO'],base:11.00},{nome:'BR-116 PR',rod:'BR-116',estados:['PR'],base:13.60},
+  {nome:'BR-277',rod:'BR-277',estados:['PR'],base:12.80},{nome:'BR-376',rod:'BR-376',estados:['PR'],base:13.20},
+  {nome:'BR-101 SC',rod:'BR-101',estados:['SC'],base:11.90},{nome:'BR-290 RS',rod:'BR-290',estados:['RS'],base:11.40},
+  {nome:'BR-116 RS',rod:'BR-116RS',estados:['RS'],base:10.60},{nome:'BR-153',rod:'BR-153',estados:['GO','TO'],base:9.70},
+  {nome:'BR-163',rod:'BR-163',estados:['MT','MS'],base:8.80},{nome:'BR-364',rod:'BR-364',estados:['MT','RO'],base:7.90},
 ];
-function fatEixo(e){return{2:1,3:1.5,4:2.0,5:2.5,6:3.0,7:3.5,8:4.0,9:4.5}[e]||3.0;}
+// Fator por eixo baseado na tabela real ANTT/ARTESP (eixo 2 = referência 1x)
+function fatEixo(e){return{2:1,3:1.7,4:2.3,5:3.0,6:3.7,7:4.3,8:4.9,9:5.5}[e]||3.7;}
 function fmt(v){return'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtKm(v){return Number(v||0).toLocaleString('pt-BR')+' km';}
 function toast(m,t='ok'){const e=document.getElementById('toast');e.textContent=m;e.className=t;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
@@ -600,7 +638,7 @@ function initMap(){
   map=new google.maps.Map(document.getElementById('map'),{center:{lat:-15.77,lng:-47.93},zoom:5,styles:[{elementType:'geometry',stylers:[{color:'#1e2433'}]},{elementType:'labels.text.fill',stylers:[{color:'#8b92a8'}]},{elementType:'labels.text.stroke',stylers:[{color:'#1e2433'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2a3348'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#3b4a6b'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f1117'}]}]});
   dirRenderer=new google.maps.DirectionsRenderer({map,polylineOptions:{strokeColor:'#3b7eff',strokeWeight:5}});
 }
-function calcRota(){
+async function calcRota(){
   const orig=document.getElementById('rt-orig').value.trim(),dest=document.getElementById('rt-dest').value.trim();
   if(!orig||!dest)return toast('Informe origem e destino.','err');
   const eixos=parseInt(document.getElementById('rt-eixos').value);
@@ -608,26 +646,83 @@ function calcRota(){
   const diesel=parseFloat(document.getElementById('rt-diesel').value)||6.20;
   const valFrete=parseFloat(document.getElementById('rt-valor').value)||0;
   go('rota');
-  setTimeout(()=>{
+  toast('Calculando rota e pedágios...','ok');
+  setTimeout(async()=>{
     initMap();
-    new google.maps.DirectionsService().route({origin:orig+', Brasil',destination:dest+', Brasil',travelMode:'DRIVING',region:'br'},(result,status)=>{
-      if(status!=='OK')return toast('Rota não encontrada. Use: Cidade, UF','err');
-      dirRenderer.setDirections(result);
-      const leg=result.routes[0].legs[0];
-      const distKm=leg.distance.value/1000,durMin=Math.round(leg.duration.value/60);
+    // 1) Geocodifica origem e destino
+    const geo=new google.maps.Geocoder();
+    const geocode=(addr)=>new Promise((res,rej)=>geo.geocode({address:addr+', Brasil',region:'br'},(r,s)=>s==='OK'?res(r[0].geometry.location):rej(s)));
+    let origLL,destLL;
+    try{origLL=await geocode(orig);destLL=await geocode(dest);}
+    catch(e){return toast('Localidade não encontrada. Use: Cidade, UF','err');}
+    // 2) Desenha rota no mapa via DirectionsService
+    new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br'},(result,status)=>{
+      if(status==='OK')dirRenderer.setDirections(result);
+    });
+    // 3) Busca rota com pedágios reais via Routes API REST
+    try{
+      const body={
+        origin:{location:{latLng:{latitude:origLL.lat(),longitude:origLL.lng()}}},
+        destination:{location:{latLng:{latitude:destLL.lat(),longitude:destLL.lng()}}},
+        travelMode:'DRIVE',
+        extraComputations:['TOLLS'],
+        routeModifiers:{
+          vehicleInfo:{emissionType:'DIESEL'},
+          tollPasses:['BR_AUTO_EXPRESSO','BR_CONECTCAR','BR_SEM_PARAR','BR_VELOE','BR_MOVE_MAIS']
+        }
+      };
+      const resp=await fetch(`https://routes.googleapis.com/directions/v2:computeRoutes?key=${GM_KEY}`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-Goog-FieldMask':'routes.distanceMeters,routes.duration,routes.travelAdvisory.tollInfo,routes.legs.travelAdvisory.tollInfo'},
+        body:JSON.stringify(body)
+      });
+      const data=await resp.json();
+      if(!data.routes||!data.routes.length)return toast('Rota não encontrada.','err');
+      const route=data.routes[0];
+      const distKm=route.distanceMeters/1000;
+      const durMin=Math.round(parseInt(route.duration)/60);
       const litros=distKm/consumo,custoComb=litros*diesel;
-      const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
-      const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
-      const pedagios=estimarPedagios(estados,distKm,eixos);
-      const totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
+      // Extrai pedágio real da Routes API
+      let totalPed=0,pedagios=[];
+      const tollInfo=route.travelAdvisory&&route.travelAdvisory.tollInfo;
+      if(tollInfo&&tollInfo.estimatedPrice&&tollInfo.estimatedPrice.length){
+        // valor base (carro), aplicamos fator de eixo para caminhão
+        const basePed=tollInfo.estimatedPrice.reduce((a,p)=>{
+          const units=parseInt(p.units||0),nanos=parseInt(p.nanos||0);
+          return a+units+(nanos/1e9);
+        },0);
+        // Fator de escala: carro = 2 eixos; aplicamos proporção ao tipo do caminhão
+        const fatorCaminhao=fatEixo(eixos)/fatEixo(2);
+        totalPed=parseFloat((basePed*fatorCaminhao).toFixed(2));
+        // Distribui nas legs para mostrar praças individuais
+        (route.legs||[]).forEach((leg,i)=>{
+          const lt=leg.travelAdvisory&&leg.travelAdvisory.tollInfo;
+          if(lt&&lt.estimatedPrice&&lt.estimatedPrice.length){
+            const legBase=lt.estimatedPrice.reduce((a,p)=>{const u=parseInt(p.units||0),n=parseInt(p.nanos||0);return a+u+(n/1e9);},0);
+            if(legBase>0)pedagios.push({nome:`Trecho ${i+1}`,rod:'Routes API',valor:parseFloat((legBase*fatorCaminhao).toFixed(2))});
+          }
+        });
+        if(!pedagios.length)pedagios=[{nome:'Total da rota',rod:'Google Routes API',valor:totalPed}];
+      } else {
+        // Fallback: API não retornou pedágio (rota sem pedágio ou cobertura indisponível)
+        toast('⚠️ Pedágio não disponível via API para esta rota — usando estimativa','err');
+        const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
+        const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
+        pedagios=estimarPedagios(estados,distKm,eixos);
+        totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
+      }
       const custoTotal=custoComb+totalPed;
       rotaAtual={orig,dest,distKm,durMin,litros,custoComb,totalPed,custoTotal,valFrete,eixos,pedagios};
       renderRota(rotaAtual);
-    });
+    }catch(err){
+      console.error(err);
+      toast('Erro ao calcular rota. Tente novamente.','err');
+    }
   },300);
 }
 function estimarPedagios(estados,distKm,eixos){
-  const fator=fatEixo(eixos),n=Math.max(1,Math.round(distKm/100*1.8));
+  // Fallback: ~1 praça a cada 35km (usado quando Routes API não retorna pedágio)
+  const fator=fatEixo(eixos),n=Math.max(1,Math.round(distKm/35));
   let c=PEDAGIOS.filter(p=>estados.some(e=>p.estados.includes(e)));if(!c.length)c=PEDAGIOS;
   return Array.from({length:n},(_,i)=>({nome:c[i%c.length].nome,rod:c[i%c.length].rod,valor:parseFloat((c[i%c.length].base*fator).toFixed(2))}));
 }
@@ -1109,5 +1204,6 @@ async function exportarRelatorioPDF(){
 (function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}`;s.async=true;document.head.appendChild(s);})();
 init();
 </script>
-</body>
-</html>
+
+
+</body></html>
