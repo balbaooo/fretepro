@@ -186,7 +186,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .fin-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .fin-panel{display:none}.fin-panel.on{display:block}
 
-/* COST CARDS */
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:1.5rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:0;line-height:1}
+.modal-close:hover{color:var(--text)}
+.btn-edit{padding:4px 8px;background:var(--blue-bg);color:var(--accent);border:1px solid var(--blue-bd);border-radius:6px;cursor:pointer;font-size:11.5px;transition:all var(--tr);margin-right:4px}
+.btn-edit:hover{background:var(--accent);color:#fff}
 .cc{background:var(--bg3);border-radius:var(--rsm);padding:1rem;border:1px solid var(--border);margin-bottom:.7rem;transition:border-color var(--tr)}
 .cc:hover{border-color:var(--border2)}
 .cc-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:.3rem}
@@ -512,6 +519,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 <div id="toast"></div>
+
+<!-- MODAL EDIÇÃO -->
+<div id="modal-overlay" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title"><span id="modal-title">Editar</span><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div id="modal-body"></div>
+    <div style="display:flex;gap:8px;margin-top:1.25rem;justify-content:flex-end">
+      <button class="btn-s" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2);box-shadow:none" onclick="closeModal()">Cancelar</button>
+      <button class="btn-s" id="modal-save-btn">💾 Salvar alterações</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const SB_URL='https://zdtrxkjvdpduflzllyvm.supabase.co';
@@ -1018,7 +1037,7 @@ function renderAbast(){
     const isArla=a.tipo==='Arla 32';
     const kb=isArla?'—':kml?(ref?(kml>=ref?`<span class="badge g">${kml.toFixed(2)}</span>`:`<span class="badge r">${kml.toFixed(2)}</span>`):kml.toFixed(2)):'—';
     const tipoBadge=isArla?'<span class="badge b">🧪 Arla 32</span>':'<span class="badge gr">⛽ '+( a.tipo||'Diesel')+'</span>';
-    return`<tr><td>${a.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${tipoBadge}</td><td>${a.posto||'—'}</td><td>${a.litros||'—'}L</td><td>${a.valor_litro?fmt(a.valor_litro):'—'}</td><td style="color:var(--accent);font-weight:600">${a.valor_total?fmt(a.valor_total):'—'}</td><td>${a.km_atual?Number(a.km_atual).toLocaleString('pt-BR'):'—'}</td><td>${kb}</td><td><button class="btn-del" onclick="del('abastecimentos','${a.id}')">🗑</button></td></tr>`;
+    return`<tr><td>${a.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${tipoBadge}</td><td>${a.posto||'—'}</td><td>${a.litros||'—'}L</td><td>${a.valor_litro?fmt(a.valor_litro):'—'}</td><td style="color:var(--accent);font-weight:600">${a.valor_total?fmt(a.valor_total):'—'}</td><td>${a.km_atual?Number(a.km_atual).toLocaleString('pt-BR'):'—'}</td><td>${kb}</td><td><button class="btn-edit" onclick="editAbast('${a.id}')">✏️</button><button class="btn-del" onclick="del('abastecimentos','${a.id}')">🗑</button></td></tr>`;
   }).join('')+'</tbody></table>';
 }
 function renderFinanciamentos(){
@@ -1064,7 +1083,7 @@ function renderFretes(){
     const c=caminhoes.find(x=>x.id===f.caminhao_id),m=motoristas.find(x=>x.id===f.motorista_id);
     const ss={Concluído:'g','Em andamento':'b',Aguardando:'a'}[f.status]||'gr';
     const ps={Pago:'g',Pendente:'a',Parcial:'b'}[f.status_pagamento]||'gr';
-    return`<tr><td>${f.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${m?m.nome:'—'}</td><td><strong>${f.origem||'—'}</strong>→<strong>${f.destino||'—'}</strong></td><td>${f.km?fmtKm(f.km):'—'}</td><td style="color:var(--amber)">${f.pedagio?fmt(f.pedagio):'—'}</td><td style="color:var(--green);font-weight:700">${fmt(f.valor)}</td><td><span class="badge ${ps}">${f.status_pagamento||'—'}</span></td><td><span class="badge ${ss}">${f.status}</span></td><td><button class="btn-del" onclick="del('fretes','${f.id}')">🗑</button></td></tr>`;
+    return`<tr><td>${f.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${m?m.nome:'—'}</td><td><strong>${f.origem||'—'}</strong>→<strong>${f.destino||'—'}</strong></td><td>${f.km?fmtKm(f.km):'—'}</td><td style="color:var(--amber)">${f.pedagio?fmt(f.pedagio):'—'}</td><td style="color:var(--green);font-weight:700">${fmt(f.valor)}</td><td><span class="badge ${ps}">${f.status_pagamento||'—'}</span></td><td><span class="badge ${ss}">${f.status}</span></td><td><button class="btn-edit" onclick="editFrete('${f.id}')">✏️</button><button class="btn-del" onclick="del('fretes','${f.id}')">🗑</button></td></tr>`;
   }).join('')+'</tbody></table>';
 }
 async function salvarFrete(){
@@ -1208,7 +1227,90 @@ function renderRelatorio(){
   document.getElementById('rel-fr').innerHTML=fM.length?`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Rota</th><th>Km</th><th>Pedágio</th><th>Valor</th><th>Pagamento</th><th>Status</th></tr></thead><tbody>`+fM.map(f=>{const c=caminhoes.find(x=>x.id===f.caminhao_id);const ss={Concluído:'g','Em andamento':'b',Aguardando:'a'}[f.status]||'gr';const ps={Pago:'g',Pendente:'a',Parcial:'b'}[f.status_pagamento]||'gr';return`<tr><td>${f.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${f.origem||'—'}→${f.destino||'—'}</td><td>${f.km?fmtKm(f.km):'—'}</td><td>${f.pedagio?fmt(f.pedagio):'—'}</td><td style="color:var(--green);font-weight:700">${fmt(f.valor)}</td><td><span class="badge ${ps}">${f.status_pagamento||'—'}</span></td><td><span class="badge ${ss}">${f.status}</span></td></tr>`;}).join('')+'</tbody></table>':'<div class="empty">Nenhum frete neste período</div>';
 }
 
-async function del(tab,id){
+// MODAL
+function openModal(title,body,saveFn){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-save-btn').onclick=saveFn;
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function closeModal(){document.getElementById('modal-overlay').style.display='none';}
+
+// EDITAR ABASTECIMENTO
+function editAbast(id){
+  const a=abastecimentos.find(x=>x.id===id);if(!a)return;
+  const camOpts=caminhoes.map(c=>`<option value="${c.id}"${c.id===a.caminhao_id?' selected':''}>${c.placa} — ${c.modelo}</option>`).join('');
+  const motOpts='<option value=""'+((!a.motorista_id)?' selected':'')+'>Sem motorista</option>'+motoristas.map(m=>`<option value="${m.id}"${m.id===a.motorista_id?' selected':''}>${m.nome}</option>`).join('');
+  const body=`
+    <div class="fr"><div class="fld"><label>Caminhão</label><select id="e-a-cam">${camOpts}</select></div><div class="fld"><label>Motorista</label><select id="e-a-mot">${motOpts}</select></div></div>
+    <div class="fr"><div class="fld"><label>Data</label><input id="e-a-dt" type="date" value="${a.data||''}"></div><div class="fld"><label>Posto</label><input id="e-a-posto" value="${a.posto||''}"></div></div>
+    <div class="fr t">
+      <div class="fld"><label>Tipo</label><select id="e-a-tipo"><option${a.tipo==='Diesel S10'?' selected':''}>Diesel S10</option><option${a.tipo==='Diesel S500'?' selected':''}>Diesel S500</option><option${a.tipo==='Arla 32'?' selected':''}>Arla 32</option></select></div>
+      <div class="fld"><label>Litros</label><input id="e-a-litros" type="number" step="0.01" value="${a.litros||''}"></div>
+      <div class="fld"><label>Preço/L (R$)</label><input id="e-a-preco" type="number" step="0.01" value="${a.valor_litro||''}"></div>
+    </div>
+    <div class="fr t">
+      <div class="fld"><label>Total (R$)</label><input id="e-a-total" type="number" step="0.01" value="${a.valor_total||''}"></div>
+      <div class="fld"><label>Arla 32 (L)</label><input id="e-a-arla-litros" type="number" step="0.01" value="${a.arla_litros||''}"></div>
+      <div class="fld"><label>Arla preço (R$/L)</label><input id="e-a-arla-preco" type="number" step="0.01" value="${a.arla_preco||''}"></div>
+    </div>
+    <div class="fr"><div class="fld"><label>Km odômetro</label><input id="e-a-km" type="number" value="${a.km_atual||''}"></div><div class="fld"><label>Observações</label><input id="e-a-obs" value="${a.obs||''}"></div></div>`;
+  openModal('✏️ Editar Abastecimento',body,async()=>{
+    const{error}=await sb.from('abastecimentos').update({
+      caminhao_id:document.getElementById('e-a-cam').value,
+      motorista_id:document.getElementById('e-a-mot').value||null,
+      data:document.getElementById('e-a-dt').value,
+      posto:document.getElementById('e-a-posto').value,
+      tipo:document.getElementById('e-a-tipo').value,
+      litros:document.getElementById('e-a-litros').value||null,
+      valor_litro:document.getElementById('e-a-preco').value||null,
+      valor_total:document.getElementById('e-a-total').value||null,
+      km_atual:document.getElementById('e-a-km').value||null,
+      arla_litros:document.getElementById('e-a-arla-litros').value||null,
+      arla_preco:document.getElementById('e-a-arla-preco').value||null,
+      obs:document.getElementById('e-a-obs').value
+    }).eq('id',id);
+    if(error)return toast('Erro: '+error.message,'err');
+    toast('Abastecimento atualizado!');closeModal();await loadAll();
+  });
+}
+
+// EDITAR FRETE
+function editFrete(id){
+  const f=fretes.find(x=>x.id===id);if(!f)return;
+  const camOpts=caminhoes.map(c=>`<option value="${c.id}"${c.id===f.caminhao_id?' selected':''}>${c.placa} — ${c.modelo}</option>`).join('');
+  const motOpts='<option value=""'+((!f.motorista_id)?' selected':'')+'>Sem motorista</option>'+motoristas.map(m=>`<option value="${m.id}"${m.id===f.motorista_id?' selected':''}>${m.nome}</option>`).join('');
+  const body=`
+    <div class="fr"><div class="fld"><label>Caminhão</label><select id="e-f-cam">${camOpts}</select></div><div class="fld"><label>Motorista</label><select id="e-f-mot">${motOpts}</select></div></div>
+    <div class="fr"><div class="fld"><label>Data</label><input id="e-f-dt" type="date" value="${f.data||''}"></div><div class="fld"><label>Cliente</label><input id="e-f-cli" value="${f.cliente||''}"></div></div>
+    <div class="fr"><div class="fld"><label>Origem</label><input id="e-f-ori" value="${f.origem||''}"></div><div class="fld"><label>Destino</label><input id="e-f-des" value="${f.destino||''}"></div></div>
+    <div class="fr t"><div class="fld"><label>Valor (R$)</label><input id="e-f-val" type="number" value="${f.valor||''}"></div><div class="fld"><label>Km rodados</label><input id="e-f-km" type="number" value="${f.km||''}"></div><div class="fld"><label>Carga</label><input id="e-f-carg" value="${f.carga||''}"></div></div>
+    <div class="fr t">
+      <div class="fld"><label>Pedágio (R$)</label><input id="e-f-ped" type="number" value="${f.pedagio||''}"></div>
+      <div class="fld"><label>Pagamento</label><select id="e-f-pag"><option${f.status_pagamento==='Pago'?' selected':''}>Pago</option><option${f.status_pagamento==='Pendente'?' selected':''}>Pendente</option><option${f.status_pagamento==='Parcial'?' selected':''}>Parcial</option></select></div>
+      <div class="fld"><label>Status viagem</label><select id="e-f-st"><option${f.status==='Concluído'?' selected':''}>Concluído</option><option${f.status==='Em andamento'?' selected':''}>Em andamento</option><option${f.status==='Aguardando'?' selected':''}>Aguardando</option></select></div>
+    </div>
+    <div class="fr"><div class="fld"><label>Vencimento pagamento</label><input id="e-f-venc" type="date" value="${f.data_vencimento_pag||''}"></div><div class="fld"><label>Observações</label><input id="e-f-obs" value="${f.obs||''}"></div></div>`;
+  openModal('✏️ Editar Frete',body,async()=>{
+    const{error}=await sb.from('fretes').update({
+      caminhao_id:document.getElementById('e-f-cam').value,
+      motorista_id:document.getElementById('e-f-mot').value||null,
+      data:document.getElementById('e-f-dt').value,
+      cliente:document.getElementById('e-f-cli').value,
+      origem:document.getElementById('e-f-ori').value,
+      destino:document.getElementById('e-f-des').value,
+      valor:document.getElementById('e-f-val').value||null,
+      km:document.getElementById('e-f-km').value||null,
+      carga:document.getElementById('e-f-carg').value,
+      pedagio:document.getElementById('e-f-ped').value||null,
+      status_pagamento:document.getElementById('e-f-pag').value,
+      status:document.getElementById('e-f-st').value,
+      obs:document.getElementById('e-f-obs').value
+    }).eq('id',id);
+    if(error)return toast('Erro: '+error.message,'err');
+    toast('Frete atualizado!');closeModal();await loadAll();
+  });
+}
   if(!confirm('Excluir?'))return;
   const{error}=await sb.from(tab).delete().eq('id',id).eq('user_id',user.id);
   if(error)return toast('Erro.','err');toast('Excluído.');await loadAll();
