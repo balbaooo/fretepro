@@ -531,6 +531,9 @@ const PEDAGIOS=[
 ];
 // Fator por eixo baseado na tabela real ANTT/ARTESP (eixo 2 = referência 1x)
 function fatEixo(e){return{2:1,3:1.7,4:2.3,5:3.0,6:3.7,7:4.3,8:4.9,9:5.5}[e]||3.7;}
+// Fator de conversão da Routes API (retorna valor carro) para caminhão por número de eixos
+// Calibrado com valores reais: 9 eixos Leme→Santos = R$966 real vs ~R$100 carro API
+function fatorApiParaCaminhao(eixos){return{2:1,3:2.1,4:2.9,5:3.8,6:4.7,7:5.8,8:7.2,9:9.0}[eixos]||4.7;}
 function fmt(v){return'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtKm(v){return Number(v||0).toLocaleString('pt-BR')+' km';}
 function toast(m,t='ok'){const e=document.getElementById('toast');e.textContent=m;e.className=t;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
@@ -700,7 +703,7 @@ async function calcRota(){
         return;
       }
       // Processa todas as rotas retornadas
-      const fatorCaminhao=fatEixo(eixos)/fatEixo(2);
+      const fatorCaminhao=fatorApiParaCaminhao(eixos);
       const rotasProcessadas=data.routes.map((route,idx)=>{
         const distKm=route.distanceMeters/1000;
         const durMin=Math.round(parseInt(route.duration)/60);
@@ -736,7 +739,7 @@ async function calcRota(){
       rotaAtual=rotasProcessadas[0];
       // Desenha a rota mais barata no mapa
       new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br',provideRouteAlternatives:true},(result,status)=>{
-        if(status==='OK')dirRenderer.setDirections(result);
+        if(status==='OK'){window._dirResult=result;dirRenderer.setDirections(result);}
       });
       renderRota(rotaAtual,rotasProcessadas);
     }catch(err){
@@ -795,6 +798,10 @@ function renderRota(r,todasRotas){
 }
 function selecionarRota(idx,rotas){
   rotaAtual=rotas[idx];
+  // Atualiza rota no mapa via DirectionsService com índice de rota alternativa
+  if(window._dirResult&&window._dirResult.routes&&window._dirResult.routes[idx]){
+    dirRenderer.setRouteIndex(idx);
+  }
   renderRota(rotaAtual,rotas);
   toast(`Rota ${idx+1} selecionada!`,'ok');
 }
