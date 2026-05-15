@@ -678,7 +678,27 @@ async function calcRota(){
         body:JSON.stringify(body)
       });
       const data=await resp.json();
-      if(!data.routes||!data.routes.length)return toast('Rota não encontrada.','err');
+      console.log('Routes API response:', JSON.stringify(data));
+      if(!data.routes||!data.routes.length){
+        console.error('Routes API error:', data.error||data);
+        // Fallback para estimativa quando Routes API falha
+        toast('⚠️ Usando estimativa de pedágios','err');
+        const geo2=new google.maps.Geocoder();
+        new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br'},(result,status)=>{
+          if(status!=='OK')return toast('Rota não encontrada.','err');
+          const leg=result.routes[0].legs[0];
+          const distKm=leg.distance.value/1000,durMin=Math.round(leg.duration.value/60);
+          const litros=distKm/consumo,custoComb=litros*diesel;
+          const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
+          const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
+          const pedagios=estimarPedagios(estados,distKm,eixos);
+          const totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
+          const custoTotal=custoComb+totalPed;
+          rotaAtual={orig,dest,distKm,durMin,litros,custoComb,totalPed,custoTotal,valFrete,eixos,pedagios};
+          renderRota(rotaAtual);
+        });
+        return;
+      }
       const route=data.routes[0];
       const distKm=route.distanceMeters/1000;
       const durMin=Math.round(parseInt(route.duration)/60);
