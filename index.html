@@ -1311,6 +1311,7 @@ function editFrete(id){
     toast('Frete atualizado!');closeModal();await loadAll();
   });
 }
+async function del(tab,id){
   if(!confirm('Excluir?'))return;
   const{error}=await sb.from(tab).delete().eq('id',id).eq('user_id',user.id);
   if(error)return toast('Erro.','err');toast('Excluído.');await loadAll();
