@@ -516,7 +516,7 @@ const SB_URL='https://zdtrxkjvdpduflzllyvm.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdHJ4a2p2ZHBkdWZsemxseXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzQ4MTAsImV4cCI6MjA5Mzc1MDgxMH0.m-mtuLBSYCqAVhYYIKbwAumdgRCTMpkdfvtuOtglqwg';
 const GM_KEY='AIzaSyACnKPJyMoQ1nrpQyQh6qC3E6Wli2jCeZM';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-let user=null,caminhoes=[],motoristas=[],fretes=[],gastos=[],abastecimentos=[],contas=[],metas=[],map=null,dirRenderer=null,rotaAtual=null;
+let user=null,caminhoes=[],motoristas=[],fretes=[],gastos=[],abastecimentos=[],contas=[],metas=[],map=null,dirRenderer=null,rotaAtual=null,rotasAlternativas=[];
 
 const PEDAGIOS=[
   {nome:'Fernão Dias',rod:'BR-381',estados:['SP','MG'],base:18.50},{nome:'Dutra',rod:'BR-116',estados:['SP','RJ'],base:16.80},
@@ -666,10 +666,11 @@ async function calcRota(){
         origin:{location:{latLng:{latitude:origLL.lat(),longitude:origLL.lng()}}},
         destination:{location:{latLng:{latitude:destLL.lat(),longitude:destLL.lng()}}},
         travelMode:'DRIVE',
+        computeAlternativeRoutes:true,
         extraComputations:['TOLLS'],
         routeModifiers:{
           vehicleInfo:{emissionType:'DIESEL'},
-          tollPasses:['BR_AUTO_EXPRESSO','BR_CONECTCAR','BR_SEM_PARAR','BR_VELOE','BR_MOVE_MAIS']
+          tollPasses:['BR_AUTO_EXPRESO','BR_CONECTCAR','BR_SEM_PARAR','BR_VELOE','BR_MOVE_MAIS','BR_TAGGY','BR_PASSA_RAPIDO']
         }
       };
       const resp=await fetch(`https://routes.googleapis.com/directions/v2:computeRoutes?key=${GM_KEY}`,{
@@ -683,7 +684,6 @@ async function calcRota(){
         console.error('Routes API error:', data.error||data);
         // Fallback para estimativa quando Routes API falha
         toast('⚠️ Usando estimativa de pedágios','err');
-        const geo2=new google.maps.Geocoder();
         new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br'},(result,status)=>{
           if(status!=='OK')return toast('Rota não encontrada.','err');
           const leg=result.routes[0].legs[0];
@@ -699,42 +699,46 @@ async function calcRota(){
         });
         return;
       }
-      const route=data.routes[0];
-      const distKm=route.distanceMeters/1000;
-      const durMin=Math.round(parseInt(route.duration)/60);
-      const litros=distKm/consumo,custoComb=litros*diesel;
-      // Extrai pedágio real da Routes API
-      let totalPed=0,pedagios=[];
-      const tollInfo=route.travelAdvisory&&route.travelAdvisory.tollInfo;
-      if(tollInfo&&tollInfo.estimatedPrice&&tollInfo.estimatedPrice.length){
-        // valor base (carro), aplicamos fator de eixo para caminhão
-        const basePed=tollInfo.estimatedPrice.reduce((a,p)=>{
-          const units=parseInt(p.units||0),nanos=parseInt(p.nanos||0);
-          return a+units+(nanos/1e9);
-        },0);
-        // Fator de escala: carro = 2 eixos; aplicamos proporção ao tipo do caminhão
-        const fatorCaminhao=fatEixo(eixos)/fatEixo(2);
-        totalPed=parseFloat((basePed*fatorCaminhao).toFixed(2));
-        // Distribui nas legs para mostrar praças individuais
-        (route.legs||[]).forEach((leg,i)=>{
-          const lt=leg.travelAdvisory&&leg.travelAdvisory.tollInfo;
-          if(lt&&lt.estimatedPrice&&lt.estimatedPrice.length){
-            const legBase=lt.estimatedPrice.reduce((a,p)=>{const u=parseInt(p.units||0),n=parseInt(p.nanos||0);return a+u+(n/1e9);},0);
-            if(legBase>0)pedagios.push({nome:`Trecho ${i+1}`,rod:'Routes API',valor:parseFloat((legBase*fatorCaminhao).toFixed(2))});
-          }
-        });
-        if(!pedagios.length)pedagios=[{nome:'Total da rota',rod:'Google Routes API',valor:totalPed}];
-      } else {
-        // Fallback: API não retornou pedágio (rota sem pedágio ou cobertura indisponível)
-        toast('⚠️ Pedágio não disponível via API para esta rota — usando estimativa','err');
-        const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
-        const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
-        pedagios=estimarPedagios(estados,distKm,eixos);
-        totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
-      }
-      const custoTotal=custoComb+totalPed;
-      rotaAtual={orig,dest,distKm,durMin,litros,custoComb,totalPed,custoTotal,valFrete,eixos,pedagios};
-      renderRota(rotaAtual);
+      // Processa todas as rotas retornadas
+      const fatorCaminhao=fatEixo(eixos)/fatEixo(2);
+      const rotasProcessadas=data.routes.map((route,idx)=>{
+        const distKm=route.distanceMeters/1000;
+        const durMin=Math.round(parseInt(route.duration)/60);
+        const litros=distKm/consumo,custoComb=litros*diesel;
+        let totalPed=0,pedagios=[];
+        const tollInfo=route.travelAdvisory&&route.travelAdvisory.tollInfo;
+        if(tollInfo&&tollInfo.estimatedPrice&&tollInfo.estimatedPrice.length){
+          const basePed=tollInfo.estimatedPrice.reduce((a,p)=>{
+            const units=parseInt(p.units||0),nanos=parseInt(p.nanos||0);
+            return a+units+(nanos/1e9);
+          },0);
+          totalPed=parseFloat((basePed*fatorCaminhao).toFixed(2));
+          (route.legs||[]).forEach((leg,i)=>{
+            const lt=leg.travelAdvisory&&leg.travelAdvisory.tollInfo;
+            if(lt&&lt.estimatedPrice&&lt.estimatedPrice.length){
+              const legBase=lt.estimatedPrice.reduce((a,p)=>{const u=parseInt(p.units||0),n=parseInt(p.nanos||0);return a+u+(n/1e9);},0);
+              if(legBase>0)pedagios.push({nome:`Trecho ${i+1}`,rod:'Routes API',valor:parseFloat((legBase*fatorCaminhao).toFixed(2))});
+            }
+          });
+          if(!pedagios.length)pedagios=[{nome:'Total da rota',rod:'Google Routes API',valor:totalPed}];
+        } else {
+          const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
+          const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
+          pedagios=estimarPedagios(estados,distKm,eixos);
+          totalPed=pedagios.reduce((a,p)=>a+p.valor,0);
+        }
+        const custoTotal=custoComb+totalPed;
+        return{orig,dest,distKm,durMin,litros,custoComb,totalPed,custoTotal,valFrete,eixos,pedagios,idx};
+      });
+      // Ordena por custo total
+      rotasProcessadas.sort((a,b)=>a.custoTotal-b.custoTotal);
+      rotasAlternativas=rotasProcessadas;
+      rotaAtual=rotasProcessadas[0];
+      // Desenha a rota mais barata no mapa
+      new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br',provideRouteAlternatives:true},(result,status)=>{
+        if(status==='OK')dirRenderer.setDirections(result);
+      });
+      renderRota(rotaAtual,rotasProcessadas);
     }catch(err){
       console.error(err);
       toast('Erro ao calcular rota. Tente novamente.','err');
@@ -747,7 +751,7 @@ function estimarPedagios(estados,distKm,eixos){
   let c=PEDAGIOS.filter(p=>estados.some(e=>p.estados.includes(e)));if(!c.length)c=PEDAGIOS;
   return Array.from({length:n},(_,i)=>({nome:c[i%c.length].nome,rod:c[i%c.length].rod,valor:parseFloat((c[i%c.length].base*fator).toFixed(2))}));
 }
-function renderRota(r){
+function renderRota(r,todasRotas){
   document.getElementById('rota-result').style.display='block';
   const h=Math.floor(r.durMin/60),m=r.durMin%60;
   document.getElementById('rota-cards').innerHTML=`
@@ -755,6 +759,29 @@ function renderRota(r){
     <div class="rr"><div class="rr-lbl">Tempo</div><div class="rr-val">${h}h${m?m+'min':''}</div></div>
     <div class="rr"><div class="rr-lbl">Combustível</div><div class="rr-val a">${fmt(r.custoComb)}</div></div>
     <div class="rr"><div class="rr-lbl">Pedágios</div><div class="rr-val r">${fmt(r.totalPed)}</div></div>`;
+  // Rotas alternativas
+  if(todasRotas&&todasRotas.length>1){
+    const altHtml=todasRotas.map((rt,i)=>{
+      const hh=Math.floor(rt.durMin/60),mm=rt.durMin%60;
+      const isMelhor=i===0,isMaisRapida=rt.durMin===Math.min(...todasRotas.map(x=>x.durMin));
+      const badge=isMelhor?'<span class="badge g" style="font-size:9px">💰 Mais barata</span>':isMaisRapida?'<span class="badge b" style="font-size:9px">⚡ Mais rápida</span>':'';
+      const borda=isMelhor?'border-color:var(--green)':isMaisRapida?'border-color:var(--accent)':'';
+      return`<div class="cc" style="cursor:pointer;${borda}" onclick="selecionarRota(${i},rotasAlternativas)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div><div class="cc-title">Rota ${i+1} ${badge}</div><div class="cc-sub">${Math.round(rt.distKm)} km · ${hh}h${mm?mm+'min':''}</div></div>
+          <div style="text-align:right"><div style="font-size:15px;font-weight:700;color:${isMelhor?'var(--green)':'var(--text)'}">${fmt(rt.custoTotal)}</div><div style="font-size:10px;color:var(--text3)">total</div></div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text2)">
+          <span>🛢️ ${fmt(rt.custoComb)}</span>
+          <span>🛣️ ${fmt(rt.totalPed)}</span>
+          <span style="color:${rt.totalPed<r.totalPed?'var(--green)':rt.totalPed>r.totalPed?'var(--red)':'var(--text3)'}">
+            ${rt.totalPed<r.totalPed?'▼ Pedágio mais barato':rt.totalPed>r.totalPed?'▲ Pedágio mais caro':'= Mesmo pedágio'}
+          </span>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('rota-cards').innerHTML+=`<div style="grid-column:1/-1;margin-top:.5rem"><div class="panel-title" style="margin-bottom:.7rem">🔀 Rotas disponíveis — clique para selecionar</div>${altHtml}</div>`;
+  }
   document.getElementById('toll-list').innerHTML=r.pedagios.map((p,i)=>`<div class="toll-item"><div><div class="toll-name">Praça ${i+1} — ${p.rod}</div><div class="toll-road">${p.nome}</div></div><div class="toll-val">${fmt(p.valor)}</div></div>`).join('');
   document.getElementById('toll-total').innerHTML=`<div style="display:flex;justify-content:space-between"><span style="font-size:12.5px;font-weight:600;color:var(--text)">Total (${r.eixos} eixos)</span><span style="font-size:15px;font-weight:700;color:var(--amber)">${fmt(r.totalPed)}</span></div>`;
   const luc=r.valFrete>0?r.valFrete-r.custoTotal:null,mg=r.valFrete>0?((luc/r.valFrete)*100).toFixed(1):null;
@@ -765,6 +792,11 @@ function renderRota(r){
     ${luc!==null?`<div class="cc"><div class="cc-title">✅ Lucro estimado</div><div class="cc-val" style="color:${luc>=0?'var(--green)':'var(--red)'}">${fmt(luc)}</div><div class="cc-sub">Margem: ${mg}%</div></div>`:`<div class="cc"><div class="cc-title">💡 Frete mínimo</div><div class="cc-val" style="color:var(--accent)">${fmt(r.custoTotal*1.3)}</div><div class="cc-sub">30% acima do custo</div></div>`}
   </div>`;
   renderHistRotas();
+}
+function selecionarRota(idx,rotas){
+  rotaAtual=rotas[idx];
+  renderRota(rotaAtual,rotas);
+  toast(`Rota ${idx+1} selecionada!`,'ok');
 }
 function registrarFreteDaRota(){
   if(!rotaAtual)return;
