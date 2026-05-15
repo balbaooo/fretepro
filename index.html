@@ -342,18 +342,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="fld"><label>Status</label><select id="c-st"><option>Disponível</option><option>Em viagem</option><option>Manutenção</option></select></div>
         </div>
         <div class="fr"><div class="fld"><label>Consumo médio (km/l)</label><input id="c-cons" type="number" placeholder="3.5" step="0.1"></div><div class="fld"><label>Vencimento seguro</label><input id="c-seg" type="date"></div></div>
+        <div style="margin:8px 0 4px;font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em">💳 Financiamento (opcional)</div>
+        <div class="fr t">
+          <div class="fld"><label>Valor da parcela (R$)</label><input id="c-parc" type="number" placeholder="0.00" step="0.01"></div>
+          <div class="fld"><label>Parcelas restantes</label><input id="c-parc-n" type="number" placeholder="Ex: 36"></div>
+          <div class="fld"><label>Vencimento parcela (dia)</label><input id="c-parc-dia" type="number" placeholder="Ex: 10" min="1" max="31"></div>
+        </div>
         <div class="fr f"><div class="fld"><label>Observações</label><textarea id="c-obs"></textarea></div></div>
         <button class="btn-s" onclick="salvarCaminhao()">💾 Salvar</button>
       </div>
       <div class="panel"><div class="panel-title">🚚 Frota</div><div class="tbl-wrap"><div id="lista-cam"><table class="tbl"><thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Tipo</th><th>Eixos</th><th>Consumo</th><th>Status</th><th>Seguro</th><th></th></tr></thead><tbody><tr><td><strong>ABC2135</strong></td><td>SCANIA R450</td><td>2025</td><td>Carreta (9 eixos)</td><td>9</td><td>1.5 km/l</td><td><span class="badge g">Disponível</span></td><td><span class="badge g">2026-12-20</span></td><td><button class="btn-del" onclick="del(&#39;caminhoes&#39;,&#39;ef8d010c-1966-4e3f-820b-6d96749cda21&#39;)">🗑</button></td></tr></tbody></table></div></div></div>
-      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"><div style="padding:12px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:13.5px;font-weight:700;color:var(--green)">R$ 0,00 total</span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
-        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Receita total</div><div class="sc-val g" style="font-size:14px">R$ 0,00</div></div>
-        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Gastos total</div><div class="sc-val r" style="font-size:14px">R$ 0,00</div></div>
-        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Este mês</div><div class="sc-val b" style="font-size:14px">R$ 0,00</div></div>
-      </div>
-    </div></div></div>
+      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"></div></div>
+      <div class="panel"><div class="panel-title">💳 Financiamentos</div><div id="financiamentos-cam"><div class="empty">Nenhum financiamento cadastrado</div></div></div>
     </div>
 
     <div id="sec-motoristas" class="sec">
@@ -377,28 +377,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="fr"><div class="fld"><label>Caminhão</label><select id="a-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="a-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="a-dt" type="date"></div><div class="fld"><label>Posto</label><input id="a-posto" placeholder="Nome do posto"></div></div>
         <div class="fr t">
+          <div class="fld"><label>Tipo de combustível</label><select id="a-tipo" onchange="toggleArla()"><option value="Diesel S10">⛽ Diesel S10</option><option value="Diesel S500">⛽ Diesel S500</option><option value="Arla 32">🧪 Arla 32</option></select></div>
           <div class="fld"><label>Litros</label><input id="a-litros" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
           <div class="fld"><label>Preço por litro (R$)</label><input id="a-preco" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
+        </div>
+        <div class="fr t">
           <div class="fld"><label>Total (R$)</label><input id="a-total" type="number" placeholder="Calculado auto" step="0.01"></div>
+          <div class="fld" id="arla-litros-wrap" style="display:none"><label>Arla 32 (litros)</label><input id="a-arla-litros" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
+          <div class="fld" id="arla-preco-wrap" style="display:none"><label>Arla 32 preço (R$/L)</label><input id="a-arla-preco" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
         </div>
         <div class="fr"><div class="fld"><label>Km atual (odômetro)</label><input id="a-km" type="number" placeholder="Ex: 125000"></div><div class="fld"><label>Km/L real (calculado)</label><input id="a-kml" readonly="" placeholder="Automático" style="opacity:.6"></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><input id="a-obs" placeholder="Notas..."></div></div>
         <button class="btn-s" onclick="salvarAbast()">💾 Salvar abastecimento</button>
       </div>
       <div class="sgrid" id="abast-resumo">
-    <div class="sc"><div class="sc-lbl">Litros este mês</div><div class="sc-val b">0.0L</div></div>
+    <div class="sc"><div class="sc-lbl">Diesel este mês</div><div class="sc-val b">0.0L</div></div>
+    <div class="sc"><div class="sc-lbl">Arla 32 este mês</div><div class="sc-val b">0.0L</div></div>
     <div class="sc"><div class="sc-lbl">Gasto combustível</div><div class="sc-val r">R$ 0,00</div></div>
-    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val a">—</div></div>
-    <div class="sc"><div class="sc-lbl">Abastecimentos</div><div class="sc-val a">0</div></div></div>
-      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"><div style="padding:11px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:12px;color:var(--text2)">0.0L · R$ 0,00</span></div>
-      <div style="font-size:11.5px;color:var(--text3)">Km/l real: <strong style="color:var(--text)">—</strong> · Estimado: 1.5 
-      </div>
-    </div></div></div>
+    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val a">—</div></div></div>
+      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"></div></div>
       <div class="panel">
         <div class="panel-title">📋 Histórico</div>
         <div class="filt">
-          <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
+          <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option></select>
+          <select id="af-tipo" onchange="renderAbast()"><option value="">Todos os tipos</option><option value="Diesel S10">Diesel S10</option><option value="Diesel S500">Diesel S500</option><option value="Arla 32">Arla 32</option></select>
           <input type="month" id="af-mes" onchange="renderAbast()">
         </div>
         <div class="tbl-wrap"><div id="lista-abast"><div class="empty">Nenhum abastecimento encontrado</div></div></div>
@@ -586,7 +588,7 @@ async function loadAll(){
   abastecimentos=ra.data||[];contas=rco.data||[];metas=rmt.data||[];
   renderSelects();renderDashboard();renderCaminhoes();renderMotoristas();
   renderFretes();renderGastos();renderAbast();renderContas();
-  renderFinanceiro();renderRelatorio();renderComissoes();renderROI();renderHistRotas();
+  renderFinanceiro();renderRelatorio();renderComissoes();renderROI();renderHistRotas();renderFinanciamentos();
 }
 
 function renderSelects(){
@@ -632,8 +634,22 @@ function renderDashboard(){
   }).join(''):'<div class="empty">Nenhuma conta pendente ✅</div>';
   document.getElementById('dash-abast').innerHTML=abastecimentos.slice(0,4).map(a=>{
     const c=caminhoes.find(x=>x.id===a.caminhao_id);
-    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">${c?c.placa:'—'} · ${a.posto||'—'}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${a.data||''} · ${a.litros||0}L</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">${fmt(a.valor_total)}</div>${a.kml_real?`<div style="font-size:10px;color:var(--text3)">${Number(a.kml_real).toFixed(2)} km/l</div>`:''}</div></div>`;
+    const tipoBadge=a.tipo==='Arla 32'?'🧪':'⛽';
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">${tipoBadge} ${c?c.placa:'—'} · ${a.posto||'—'}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${a.data||''} · ${a.litros||0}L ${a.tipo||'Diesel'}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">${fmt(a.valor_total)}</div>${a.kml_real?`<div style="font-size:10px;color:var(--text3)">${Number(a.kml_real).toFixed(2)} km/l</div>`:''}</div></div>`;
   }).join('')||'<div class="empty">Nenhum abastecimento ainda</div>';
+  // Alertas de financiamento no dashboard
+  const hoje2=new Date();
+  const alertasFinanc=caminhoes.filter(c=>c.parcela_valor&&c.parcelas_restantes).map(c=>{
+    const diaVenc=Number(c.parcela_dia_venc||10);
+    let proxVenc=new Date(hoje2.getFullYear(),hoje2.getMonth(),diaVenc);
+    if(proxVenc<=hoje2)proxVenc=new Date(hoje2.getFullYear(),hoje2.getMonth()+1,diaVenc);
+    const dias=Math.ceil((proxVenc-hoje2)/(864e5));
+    return{c,dias,parc:Number(c.parcela_valor)};
+  }).filter(x=>x.dias<=10);
+  if(alertasFinanc.length){
+    const alertHtml=alertasFinanc.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><div style="font-size:12.5px;color:var(--text)">${x.c.placa} — ${x.c.modelo}</div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--red)">${fmt(x.parc)}</div><div style="font-size:10px;color:${x.dias<=5?'var(--red)':'var(--amber)'}">Vence em ${x.dias}d ⚠️</div></div></div>`).join('');
+    metaDash.innerHTML=(metaDash.innerHTML||'')+`<div class="meta-box" style="border-color:var(--red-bd);background:var(--red-bg)"><div class="meta-header"><div class="meta-title" style="color:var(--red)">💳 Parcelas vencendo em breve</div></div>${alertHtml}</div>`;
+  }
 }
 
 function initMap(){
@@ -839,9 +855,19 @@ function renderCaminhoes(){
 async function salvarCaminhao(){
   const placa=document.getElementById('c-pla').value.trim(),modelo=document.getElementById('c-mod').value.trim();
   if(!placa||!modelo)return toast('Preencha placa e modelo.','err');
-  const{error}=await sb.from('caminhoes').insert({user_id:user.id,placa,modelo,ano:document.getElementById('c-ano').value,tipo:document.getElementById('c-tip').value,eixos:document.getElementById('c-eix').value,status:document.getElementById('c-st').value,consumo_medio:document.getElementById('c-cons').value||null,vencimento_seguro:document.getElementById('c-seg').value||null,obs:document.getElementById('c-obs').value});
+  const{error}=await sb.from('caminhoes').insert({user_id:user.id,placa,modelo,
+    ano:document.getElementById('c-ano').value,
+    tipo:document.getElementById('c-tip').value,
+    eixos:document.getElementById('c-eix').value,
+    status:document.getElementById('c-st').value,
+    consumo_medio:document.getElementById('c-cons').value||null,
+    vencimento_seguro:document.getElementById('c-seg').value||null,
+    parcela_valor:document.getElementById('c-parc').value||null,
+    parcelas_restantes:document.getElementById('c-parc-n').value||null,
+    parcela_dia_venc:document.getElementById('c-parc-dia').value||null,
+    obs:document.getElementById('c-obs').value});
   if(error)return toast('Erro: '+error.message,'err');
-  ['c-pla','c-mod','c-ano','c-cons','c-seg','c-obs'].forEach(id=>document.getElementById(id).value='');
+  ['c-pla','c-mod','c-ano','c-cons','c-seg','c-parc','c-parc-n','c-parc-dia','c-obs'].forEach(id=>document.getElementById(id).value='');
   toast('Caminhão cadastrado!');await loadAll();
 }
 function renderROI(){
@@ -897,63 +923,135 @@ function renderComissoes(){
   }).join('');
 }
 
+function toggleArla(){
+  const isArla=document.getElementById('a-tipo').value==='Arla 32';
+  const isDiesel=!isArla;
+  document.getElementById('arla-litros-wrap').style.display='none';
+  document.getElementById('arla-preco-wrap').style.display='none';
+  // Se diesel, mostrar campos de Arla opcionais
+  if(isDiesel){
+    document.getElementById('arla-litros-wrap').style.display='block';
+    document.getElementById('arla-preco-wrap').style.display='block';
+  }
+  calcAbast();
+}
 function calcAbast(){
   const l=parseFloat(document.getElementById('a-litros').value)||0;
   const p=parseFloat(document.getElementById('a-preco').value)||0;
-  if(l&&p)document.getElementById('a-total').value=(l*p).toFixed(2);
+  const la=parseFloat(document.getElementById('a-arla-litros').value)||0;
+  const pa=parseFloat(document.getElementById('a-arla-preco').value)||0;
+  const total=(l*p)+(la*pa);
+  if(total>0)document.getElementById('a-total').value=total.toFixed(2);
+  else if(l&&p)document.getElementById('a-total').value=(l*p).toFixed(2);
 }
 async function salvarAbast(){
   const cam=document.getElementById('a-cam').value,litros=document.getElementById('a-litros').value;
   if(!cam)return toast('Selecione um caminhão.','err');if(!litros)return toast('Informe os litros.','err');
   const km=document.getElementById('a-km').value;
+  const tipo=document.getElementById('a-tipo').value;
+  const arlaLitros=document.getElementById('a-arla-litros').value||null;
+  const arlaPreco=document.getElementById('a-arla-preco').value||null;
   let kml_real=null;
-  if(km){
-    const ults=abastecimentos.filter(a=>a.caminhao_id===cam&&a.km_atual).sort((a,b)=>new Date(b.data)-new Date(a.data));
+  if(km&&tipo!=='Arla 32'){
+    const ults=abastecimentos.filter(a=>a.caminhao_id===cam&&a.km_atual&&a.tipo!=='Arla 32').sort((a,b)=>new Date(b.data)-new Date(a.data));
     if(ults.length>0){const diff=Number(km)-Number(ults[0].km_atual);if(diff>0&&Number(ults[0].litros)>0)kml_real=(diff/Number(ults[0].litros)).toFixed(2);}
   }
-  const{error}=await sb.from('abastecimentos').insert({user_id:user.id,caminhao_id:cam,motorista_id:document.getElementById('a-mot').value||null,data:document.getElementById('a-dt').value,posto:document.getElementById('a-posto').value,litros,valor_litro:document.getElementById('a-preco').value||null,valor_total:document.getElementById('a-total').value||null,km_atual:km||null,kml_real,obs:document.getElementById('a-obs').value});
+  const{error}=await sb.from('abastecimentos').insert({
+    user_id:user.id,caminhao_id:cam,
+    motorista_id:document.getElementById('a-mot').value||null,
+    data:document.getElementById('a-dt').value,
+    posto:document.getElementById('a-posto').value,
+    tipo,litros,
+    valor_litro:document.getElementById('a-preco').value||null,
+    valor_total:document.getElementById('a-total').value||null,
+    km_atual:km||null,kml_real,
+    arla_litros:arlaLitros,
+    arla_preco:arlaPreco,
+    arla_total:arlaLitros&&arlaPreco?(Number(arlaLitros)*Number(arlaPreco)).toFixed(2):null,
+    obs:document.getElementById('a-obs').value
+  });
   if(error)return toast('Erro: '+error.message,'err');
-  ['a-litros','a-preco','a-total','a-km','a-kml','a-posto','a-obs'].forEach(id=>document.getElementById(id).value='');
+  ['a-litros','a-preco','a-total','a-km','a-kml','a-posto','a-obs','a-arla-litros','a-arla-preco'].forEach(id=>document.getElementById(id).value='');
   toast('Abastecimento registrado!');await loadAll();
 }
 function renderAbast(){
-  const fc=document.getElementById('af-cam').value,fm=document.getElementById('af-mes').value;
-  let data=abastecimentos.filter(a=>{if(fc&&a.caminhao_id!==fc)return false;if(fm&&a.data&&!a.data.startsWith(fm))return false;return true;});
+  const fc=document.getElementById('af-cam').value,fm=document.getElementById('af-mes').value,ft=document.getElementById('af-tipo')?.value||'';
+  let data=abastecimentos.filter(a=>{if(fc&&a.caminhao_id!==fc)return false;if(fm&&a.data&&!a.data.startsWith(fm))return false;if(ft&&a.tipo!==ft)return false;return true;});
   const mes=new Date().toISOString().slice(0,7);
   const aM=abastecimentos.filter(a=>a.data&&a.data.startsWith(mes));
-  const tL=aM.reduce((a,x)=>a+Number(x.litros||0),0);
+  const diesel=aM.filter(a=>a.tipo!=='Arla 32');
+  const arla=aM.filter(a=>a.tipo==='Arla 32');
+  const tLDiesel=diesel.reduce((a,x)=>a+Number(x.litros||0),0);
+  const tLArla=arla.reduce((a,x)=>a+Number(x.litros||0),0);
   const tV=aM.reduce((a,x)=>a+Number(x.valor_total||0),0);
-  const kls=aM.filter(a=>a.kml_real).map(a=>Number(a.kml_real));
+  const kls=diesel.filter(a=>a.kml_real).map(a=>Number(a.kml_real));
   const kMed=kls.length?kls.reduce((a,b)=>a+b,0)/kls.length:0;
   document.getElementById('abast-resumo').innerHTML=`
-    <div class="sc"><div class="sc-lbl">Litros este mês</div><div class="sc-val b">${tL.toFixed(1)}L</div></div>
+    <div class="sc"><div class="sc-lbl">Diesel este mês</div><div class="sc-val b">${tLDiesel.toFixed(1)}L</div></div>
+    <div class="sc"><div class="sc-lbl">Arla 32 este mês</div><div class="sc-val b">${tLArla.toFixed(1)}L</div></div>
     <div class="sc"><div class="sc-lbl">Gasto combustível</div><div class="sc-val r">${fmt(tV)}</div></div>
-    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val ${kMed>3.5?'g':'a'}">${kMed?kMed.toFixed(2)+' km/l':'—'}</div></div>
-    <div class="sc"><div class="sc-lbl">Abastecimentos</div><div class="sc-val a">${aM.length}</div></div>`;
+    <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val ${kMed>3.5?'g':'a'}">${kMed?kMed.toFixed(2)+' km/l':'—'}</div></div>`;
   const byCam=document.getElementById('abast-por-cam');
   byCam.innerHTML=caminhoes.length?caminhoes.map(c=>{
-    const ac=abastecimentos.filter(a=>a.caminhao_id===c.id);
+    const ac=abastecimentos.filter(a=>a.caminhao_id===c.id&&a.tipo!=='Arla 32');
+    const aa=abastecimentos.filter(a=>a.caminhao_id===c.id&&a.tipo==='Arla 32');
     const lt=ac.reduce((a,x)=>a+Number(x.litros||0),0);
-    const vl=ac.reduce((a,x)=>a+Number(x.valor_total||0),0);
+    const la=aa.reduce((a,x)=>a+Number(x.litros||0),0);
+    const vl=abastecimentos.filter(a=>a.caminhao_id===c.id).reduce((a,x)=>a+Number(x.valor_total||0),0);
     const kls2=ac.filter(a=>a.kml_real).map(a=>Number(a.kml_real));
     const km2=kls2.length?kls2.reduce((a,b)=>a+b,0)/kls2.length:0;
     const ref=c.consumo_medio?Number(c.consumo_medio):null;
     return`<div style="padding:11px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:12px;color:var(--text2)">${lt.toFixed(1)}L · ${fmt(vl)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:12px;color:var(--text2)">${fmt(vl)}</span></div>
+      <div style="font-size:11.5px;color:var(--text3);margin-bottom:3px">⛽ Diesel: <strong style="color:var(--text)">${lt.toFixed(1)}L</strong>${la>0?` · 🧪 Arla 32: <strong style="color:var(--text)">${la.toFixed(1)}L</strong>`:''}</div>
       <div style="font-size:11.5px;color:var(--text3)">Km/l real: <strong style="color:${km2&&ref?(km2>=ref?'var(--green)':'var(--red)'):'var(--text)'}">${km2?km2.toFixed(2):'—'}</strong>${ref?' · Estimado: '+ref:''} ${km2&&ref?(km2>=ref?' ✅':' ⚠️ Abaixo do esperado'):''}
       </div>
     </div>`;
   }).join(''):'<div class="empty">Sem caminhões</div>';
   const el=document.getElementById('lista-abast');
   if(!data.length){el.innerHTML='<div class="empty">Nenhum abastecimento encontrado</div>';return;}
-  el.innerHTML=`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Posto</th><th>Litros</th><th>R$/L</th><th>Total</th><th>Km odôm.</th><th>Km/L real</th><th></th></tr></thead><tbody>`+
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Data</th><th>Caminhão</th><th>Tipo</th><th>Posto</th><th>Litros</th><th>R$/L</th><th>Total</th><th>Km odôm.</th><th>Km/L</th><th></th></tr></thead><tbody>`+
   data.map(a=>{
     const c=caminhoes.find(x=>x.id===a.caminhao_id);
     const ref=c&&c.consumo_medio?Number(c.consumo_medio):null;
     const kml=a.kml_real?Number(a.kml_real):null;
-    const kb=kml?(ref?(kml>=ref?`<span class="badge g">${kml.toFixed(2)}</span>`:`<span class="badge r">${kml.toFixed(2)}</span>`):kml.toFixed(2)):'—';
-    return`<tr><td>${a.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${a.posto||'—'}</td><td>${a.litros||'—'}L</td><td>${a.valor_litro?fmt(a.valor_litro):'—'}</td><td style="color:var(--accent);font-weight:600">${a.valor_total?fmt(a.valor_total):'—'}</td><td>${a.km_atual?Number(a.km_atual).toLocaleString('pt-BR'):'—'}</td><td>${kb}</td><td><button class="btn-del" onclick="del('abastecimentos','${a.id}')">🗑</button></td></tr>`;
+    const isArla=a.tipo==='Arla 32';
+    const kb=isArla?'—':kml?(ref?(kml>=ref?`<span class="badge g">${kml.toFixed(2)}</span>`:`<span class="badge r">${kml.toFixed(2)}</span>`):kml.toFixed(2)):'—';
+    const tipoBadge=isArla?'<span class="badge b">🧪 Arla 32</span>':'<span class="badge gr">⛽ '+( a.tipo||'Diesel')+'</span>';
+    return`<tr><td>${a.data||'—'}</td><td>${c?c.placa:'—'}</td><td>${tipoBadge}</td><td>${a.posto||'—'}</td><td>${a.litros||'—'}L</td><td>${a.valor_litro?fmt(a.valor_litro):'—'}</td><td style="color:var(--accent);font-weight:600">${a.valor_total?fmt(a.valor_total):'—'}</td><td>${a.km_atual?Number(a.km_atual).toLocaleString('pt-BR'):'—'}</td><td>${kb}</td><td><button class="btn-del" onclick="del('abastecimentos','${a.id}')">🗑</button></td></tr>`;
   }).join('')+'</tbody></table>';
+}
+function renderFinanciamentos(){
+  const el=document.getElementById('financiamentos-cam');if(!el)return;
+  const comFinanc=caminhoes.filter(c=>c.parcela_valor&&c.parcelas_restantes);
+  if(!comFinanc.length){el.innerHTML='<div class="empty">Nenhum financiamento cadastrado</div>';return;}
+  const hoje=new Date();
+  el.innerHTML=comFinanc.map(c=>{
+    const parc=Number(c.parcela_valor);
+    const restantes=Number(c.parcelas_restantes);
+    const saldo=parc*restantes;
+    const diaVenc=Number(c.parcela_dia_venc||10);
+    // Próximo vencimento
+    let proxVenc=new Date(hoje.getFullYear(),hoje.getMonth(),diaVenc);
+    if(proxVenc<=hoje)proxVenc=new Date(hoje.getFullYear(),hoje.getMonth()+1,diaVenc);
+    const diasProx=Math.ceil((proxVenc-hoje)/(864e5));
+    const alerta=diasProx<=5?'var(--red)':diasProx<=10?'var(--amber)':'var(--green)';
+    const pct=Math.max(0,Math.min(100,100-(restantes/Math.max(1,restantes)*100)));
+    return`<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:13.5px;font-weight:700;color:var(--text)">${c.placa} — ${c.modelo}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--red)">${fmt(saldo)} restante</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px">
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Parcela mensal</div><div class="sc-val r" style="font-size:14px">${fmt(parc)}</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Parcelas restantes</div><div class="sc-val a" style="font-size:14px">${restantes}x</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Próx. vencimento</div><div class="sc-val" style="font-size:13px;color:${alerta}">dia ${diaVenc} ${diasProx<=5?'⚠️':''}</div></div>
+      </div>
+      <div style="font-size:11.5px;color:${alerta};font-weight:600;margin-bottom:6px">
+        ${diasProx<=5?`🔔 Vence em ${diasProx} dia${diasProx===1?'':'s'}!`:diasProx<=10?`⏰ Vence em ${diasProx} dias`:`✅ Próximo vencimento em ${diasProx} dias`}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderFretes(){
