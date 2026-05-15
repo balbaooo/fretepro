@@ -706,7 +706,7 @@ async function calcRota(){
         new google.maps.DirectionsService().route({origin:origLL,destination:destLL,travelMode:'DRIVING',region:'br'},(result,status)=>{
           if(status!=='OK')return toast('Rota não encontrada.','err');
           const leg=result.routes[0].legs[0];
-          const distKm=leg.distance.value/1000,durMin=Math.round(leg.duration.value/60);
+          const distKm=leg.distance.value/1000,durMin=Math.round(leg.duration.value/60*1.3); // fator caminhão
           const litros=distKm/consumo,custoComb=litros*diesel;
           const uf1=orig.match(/,\s*([A-Z]{2})$/),uf2=dest.match(/,\s*([A-Z]{2})$/);
           const estados=[uf1?uf1[1]:null,uf2?uf2[1]:null].filter(Boolean);
@@ -722,7 +722,7 @@ async function calcRota(){
       const fatorCaminhao=fatorApiParaCaminhao(eixos);
       const rotasProcessadas=data.routes.map((route,idx)=>{
         const distKm=route.distanceMeters/1000;
-        const durMin=Math.round(parseInt(route.duration)/60);
+        const durMin=Math.round(parseInt(route.duration)/60*1.3); // fator caminhão pesado
         const litros=distKm/consumo,custoComb=litros*diesel;
         let totalPed=0,pedagios=[];
         const tollInfo=route.travelAdvisory&&route.travelAdvisory.tollInfo;
