@@ -254,6 +254,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="nv" onclick="go(&#39;contas&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M9 14l2 2 4-4"></path><rect x="3" y="5" width="18" height="14" rx="2" stroke-width="1.8"></rect></svg>Contas a Receber</div>
       <div class="nv" onclick="go(&#39;gastos&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M2 10h20"></path></svg>Gastos</div>
       <div class="nv" onclick="go(&#39;relatorios&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M18 20V10M12 20V4M6 20v-6"></path></svg>Relatórios</div>
+      <div class="nv" onclick="go(&#39;dre&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M3 9h18M9 21V9"></path></svg>DRE</div>
     </div>
     <div class="sb-foot">
       <div class="sb-user"><div class="sb-av" id="sb-av">F</div><div class="sb-email" id="sb-email">febalbao@gmail.com</div></div>
@@ -500,7 +501,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
     </div>
 
-    <div id="sec-relatorios" class="sec">
+    <div id="sec-dre" class="sec">
+      <div class="pg-hdr"><div class="page-title">DRE</div><div class="page-sub">Demonstrativo de Resultado do Exercício</div></div>
+      <div style="display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center">
+        <select id="dre-tipo" onchange="renderDRE()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-family:'Inter',sans-serif;font-size:13px">
+          <option value="mensal">Mensal</option>
+          <option value="trimestral">Trimestral</option>
+          <option value="anual">Anual</option>
+        </select>
+        <input type="month" id="dre-mes" onchange="renderDRE()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-family:'Inter',sans-serif;font-size:13px">
+        <button class="btn-s" onclick="renderDRE()">🔄 Atualizar</button>
+        <button class="btn-s" onclick="exportarDREPDF()" style="background:linear-gradient(135deg,#7c3aed,#5b21b6)">📄 Exportar PDF</button>
+      </div>
+      <div id="dre-content"></div>
+    </div>
       <div class="pg-hdr"><div class="page-title">Relatórios</div><div class="page-sub">Análise mensal completa</div></div>
       <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button><button class="btn-s" id="btn-export-pdf" onclick="exportarRelatorioPDF()" style="background:var(--accent);color:#fff;border:none">📄 Exportar PDF</button></div>
       <div class="sgrid" id="rel-stats">
@@ -572,7 +586,7 @@ async function showApp(){
   document.getElementById('dash-dt').textContent=hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   const mes=hoje.toISOString().slice(0,7);
   ['f-dt','cv-dt','a-dt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoje.toISOString().slice(0,10);});
-  ['fin-mes','rel-mes','cf-mes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=mes;});
+  ['fin-mes','rel-mes','cf-mes','dre-mes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=mes;});
   await loadAll();
 }
 async function login(){
@@ -607,7 +621,7 @@ async function loadAll(){
   abastecimentos=ra.data||[];contas=rco.data||[];metas=rmt.data||[];
   renderSelects();renderDashboard();renderCaminhoes();renderMotoristas();
   renderFretes();renderGastos();renderAbast();renderContas();
-  renderFinanceiro();renderRelatorio();renderComissoes();renderROI();renderHistRotas();renderFinanciamentos();
+  renderFinanceiro();renderRelatorio();renderComissoes();renderROI();renderHistRotas();renderFinanciamentos();renderDRE();
 }
 
 function renderSelects(){
@@ -1206,6 +1220,240 @@ function renderFinanceiro(){
   document.getElementById('fin-cam-lista').innerHTML=caminhoes.map(c=>{const r=fM.filter(f=>f.caminhao_id===c.id).reduce((a,f)=>a+Number(f.valor||0),0);const g=gM.filter(g=>g.caminhao_id===c.id).reduce((a,g)=>a+Number(g.valor||0),0);const l=r-g;const m2=r>0?((l/r)*100).toFixed(1):0;const pct=r>0?Math.min(100,Math.max(0,Math.round((l/r)*100))):0;return`<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">${c.placa} — ${c.modelo}</span><span style="font-size:14px;font-weight:700;color:${l>=0?'var(--green)':'var(--red)'}">${fmt(l)}</span></div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Rec: ${fmt(r)} · Gastos: ${fmt(g)} · Margem: ${m2}%</div><div class="prog"><div class="prog-f" style="width:${pct}%;background:${l>=0?'var(--green)':'var(--red)'}"></div></div></div>`;}).join('')||'<div class="empty">Sem caminhões</div>';
 }
 
+function renderDRE(){
+  const tipo=document.getElementById('dre-tipo')?.value||'mensal';
+  const mes=document.getElementById('dre-mes')?.value||new Date().toISOString().slice(0,7);
+  const [ano,m]=mes.split('-').map(Number);
+
+  // Define períodos conforme tipo
+  let periodos=[];
+  if(tipo==='mensal'){
+    periodos=[{label:new Date(ano,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}),meses:[mes]}];
+  } else if(tipo==='trimestral'){
+    const tri=Math.floor((m-1)/3);
+    const mesesTri=Array.from({length:3},(_,i)=>{
+      const d=new Date(ano,tri*3+i,1);
+      return d.toISOString().slice(0,7);
+    });
+    periodos=[{label:`${tri+1}º Trimestre ${ano}`,meses:mesesTri}];
+  } else {
+    // Anual — mostra todos os 12 meses
+    periodos=Array.from({length:12},(_,i)=>{
+      const d=new Date(ano,i,1);
+      return{label:d.toLocaleDateString('pt-BR',{month:'short'}),meses:[d.toISOString().slice(0,7)]};
+    });
+  }
+
+  const calcPeriodo=(mesesArr)=>{
+    const fM=fretes.filter(f=>f.data&&mesesArr.some(ms=>f.data.startsWith(ms)));
+    const gM=gastos.filter(g=>mesesArr.some(ms=>(g.mes||'').slice(0,7)===ms));
+    const aM=abastecimentos.filter(a=>a.data&&mesesArr.some(ms=>a.data.startsWith(ms)));
+    const rec=fM.reduce((a,f)=>a+Number(f.valor||0),0);
+    const gFix=gM.filter(g=>g.tipo==='fixo').reduce((a,g)=>a+Number(g.valor||0),0);
+    const gVar=gM.filter(g=>g.tipo==='variavel').reduce((a,g)=>a+Number(g.valor||0),0);
+    const comb=aM.reduce((a,x)=>a+Number(x.valor_total||0),0);
+    const pedagios=fM.reduce((a,f)=>a+Number(f.pedagio||0),0);
+    const comissoes=motoristas.reduce((a,mot)=>{
+      const fMot=fM.filter(f=>f.motorista_id===mot.id);
+      const recMot=fMot.reduce((x,f)=>x+Number(f.valor||0),0);
+      return a+(mot.pct_frete?recMot*(Number(mot.pct_frete)/100):0)+(Number(mot.salario||0));
+    },0);
+    const parcelas=caminhoes.reduce((a,c)=>a+Number(c.parcela_valor||0),0)*mesesArr.length;
+    const gTot=gFix+gVar;
+    const custoOp=comb+pedagios+comissoes;
+    const ebitda=rec-custoOp-gVar;
+    const ebit=ebitda-gFix;
+    const lucro=ebit-parcelas;
+    const mg=rec>0?((lucro/rec)*100):0;
+    const km=fM.reduce((a,f)=>a+Number(f.km||0),0);
+    return{rec,gFix,gVar,comb,pedagios,comissoes,parcelas,custoOp,ebitda,ebit,lucro,mg,km,fretes:fM.length};
+  };
+
+  const el=document.getElementById('dre-content');
+
+  if(tipo==='anual'){
+    // Tabela comparativa 12 meses
+    const dados=periodos.map(p=>({...p,d:calcPeriodo(p.meses)}));
+    const totais=dados.reduce((a,p)=>({
+      rec:a.rec+p.d.rec,gFix:a.gFix+p.d.gFix,gVar:a.gVar+p.d.gVar,
+      comb:a.comb+p.d.comb,pedagios:a.pedagios+p.d.pedagios,
+      comissoes:a.comissoes+p.d.comissoes,parcelas:a.parcelas+p.d.parcelas,
+      ebitda:a.ebitda+p.d.ebitda,ebit:a.ebit+p.d.ebit,lucro:a.lucro+p.d.lucro,
+      km:a.km+p.d.km,fretes:a.fretes+p.d.fretes
+    }),{rec:0,gFix:0,gVar:0,comb:0,pedagios:0,comissoes:0,parcelas:0,ebitda:0,ebit:0,lucro:0,km:0,fretes:0});
+    totais.mg=totais.rec>0?((totais.lucro/totais.rec)*100):0;
+
+    el.innerHTML=`
+    <div class="panel" style="overflow-x:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <div class="panel-title" style="margin:0">📊 DRE Anual ${ano}</div>
+        <div style="font-size:12px;color:var(--text3)">Todos os valores em R$</div>
+      </div>
+      <table class="tbl" style="min-width:900px">
+        <thead><tr>
+          <th style="min-width:180px">DESCRIÇÃO</th>
+          ${dados.map(p=>`<th style="text-align:right">${p.label}</th>`).join('')}
+          <th style="text-align:right;color:var(--accent)">TOTAL</th>
+        </tr></thead>
+        <tbody>
+          ${dreRow('💰 RECEITA BRUTA',dados.map(p=>p.d.rec),totais.rec,'g',true)}
+          ${dreRow('🛢️ Combustível',dados.map(p=>-p.d.comb),-totais.comb,'r')}
+          ${dreRow('🛣️ Pedágios',dados.map(p=>-p.d.pedagios),-totais.pedagios,'r')}
+          ${dreRow('👤 Comissões/Salários',dados.map(p=>-p.d.comissoes),-totais.comissoes,'r')}
+          ${dreRow('📦 Custos variáveis',dados.map(p=>-p.d.gVar),-totais.gVar,'r')}
+          <tr style="border-top:2px solid var(--border2)">
+            <td style="font-weight:700;color:var(--text);font-size:12px">EBITDA</td>
+            ${dados.map(p=>`<td style="text-align:right;font-weight:700;color:${p.d.ebitda>=0?'var(--green)':'var(--red)'}">${fmt(p.d.ebitda)}</td>`).join('')}
+            <td style="text-align:right;font-weight:700;color:${totais.ebitda>=0?'var(--green)':'var(--red)'}">${fmt(totais.ebitda)}</td>
+          </tr>
+          ${dreRow('🏢 Custos fixos',dados.map(p=>-p.d.gFix),-totais.gFix,'r')}
+          <tr style="border-top:2px solid var(--border2)">
+            <td style="font-weight:700;color:var(--text);font-size:12px">EBIT (Lucro operacional)</td>
+            ${dados.map(p=>`<td style="text-align:right;font-weight:700;color:${p.d.ebit>=0?'var(--green)':'var(--red)'}">${fmt(p.d.ebit)}</td>`).join('')}
+            <td style="text-align:right;font-weight:700;color:${totais.ebit>=0?'var(--green)':'var(--red)'}">${fmt(totais.ebit)}</td>
+          </tr>
+          ${dreRow('💳 Parcelas financiamento',dados.map(p=>-p.d.parcelas),-totais.parcelas,'r')}
+          <tr style="border-top:3px solid var(--accent);background:rgba(59,130,246,0.06)">
+            <td style="font-weight:800;color:var(--text);font-size:13px">LUCRO LÍQUIDO</td>
+            ${dados.map(p=>`<td style="text-align:right;font-weight:800;font-size:13px;color:${p.d.lucro>=0?'var(--green)':'var(--red)'}">${fmt(p.d.lucro)}</td>`).join('')}
+            <td style="text-align:right;font-weight:800;font-size:13px;color:${totais.lucro>=0?'var(--green)':'var(--red)'}">${fmt(totais.lucro)}</td>
+          </tr>
+          <tr>
+            <td style="font-size:11px;color:var(--text3)">Margem líquida</td>
+            ${dados.map(p=>`<td style="text-align:right;font-size:11px;color:var(--text3)">${p.d.mg.toFixed(1)}%</td>`).join('')}
+            <td style="text-align:right;font-size:11px;color:var(--text3)">${totais.mg.toFixed(1)}%</td>
+          </tr>
+          <tr><td colspan="${dados.length+2}" style="padding:4px 0;border:none"></td></tr>
+          <tr style="background:rgba(255,255,255,0.02)">
+            <td style="font-size:11px;color:var(--text3)">Fretes realizados</td>
+            ${dados.map(p=>`<td style="text-align:right;font-size:11px;color:var(--text3)">${p.d.fretes}</td>`).join('')}
+            <td style="text-align:right;font-size:11px;color:var(--text3)">${totais.fretes}</td>
+          </tr>
+          <tr>
+            <td style="font-size:11px;color:var(--text3)">Km rodados</td>
+            ${dados.map(p=>`<td style="text-align:right;font-size:11px;color:var(--text3)">${fmtKm(p.d.km)}</td>`).join('')}
+            <td style="text-align:right;font-size:11px;color:var(--text3)">${fmtKm(totais.km)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
+  } else {
+    // Mensal ou trimestral — DRE detalhado vertical
+    const d=calcPeriodo(periodos[0].meses);
+    const label=periodos[0].label;
+    el.innerHTML=`
+    <div class="sgrid" style="margin-bottom:1.25rem">
+      <div class="sc"><div class="sc-lbl">Receita bruta</div><div class="sc-val g">${fmt(d.rec)}</div></div>
+      <div class="sc"><div class="sc-lbl">EBITDA</div><div class="sc-val ${d.ebitda>=0?'g':'r'}">${fmt(d.ebitda)}</div></div>
+      <div class="sc"><div class="sc-lbl">Lucro líquido</div><div class="sc-val ${d.lucro>=0?'g':'r'}">${fmt(d.lucro)}</div></div>
+      <div class="sc"><div class="sc-lbl">Margem líquida</div><div class="sc-val ${d.mg>=0?'g':'r'}">${d.mg.toFixed(1)}%</div></div>
+      <div class="sc"><div class="sc-lbl">Fretes</div><div class="sc-val b">${d.fretes}</div></div>
+      <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val a">${fmtKm(d.km)}</div></div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+        <div class="panel-title" style="margin:0">📊 DRE — ${label.charAt(0).toUpperCase()+label.slice(1)}</div>
+      </div>
+      ${dreLinhaVertical('💰 RECEITA BRUTA',d.rec,d.rec,true,'var(--green)')}
+      <div style="margin:8px 0 4px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">( - ) CUSTOS OPERACIONAIS</div>
+      ${dreLinhaVertical('🛢️ Combustível',-d.comb,d.rec)}
+      ${dreLinhaVertical('🛣️ Pedágios',-d.pedagios,d.rec)}
+      ${dreLinhaVertical('👤 Comissões / Salários motoristas',-d.comissoes,d.rec)}
+      ${dreLinhaVertical('📦 Custos variáveis',-d.gVar,d.rec)}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border2);border-bottom:1px solid var(--border);margin:6px 0">
+        <span style="font-size:13px;font-weight:700;color:var(--text)">= EBITDA</span>
+        <span style="font-size:15px;font-weight:800;color:${d.ebitda>=0?'var(--green)':'var(--red)'}">${fmt(d.ebitda)} <span style="font-size:11px;font-weight:400;color:var(--text3)">(${d.rec>0?((d.ebitda/d.rec)*100).toFixed(1):0}%)</span></span>
+      </div>
+      <div style="margin:8px 0 4px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">( - ) CUSTOS FIXOS</div>
+      ${dreLinhaVertical('🏢 Custos fixos',-d.gFix,d.rec)}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border2);border-bottom:1px solid var(--border);margin:6px 0">
+        <span style="font-size:13px;font-weight:700;color:var(--text)">= EBIT (Lucro operacional)</span>
+        <span style="font-size:15px;font-weight:800;color:${d.ebit>=0?'var(--green)':'var(--red)'}">${fmt(d.ebit)} <span style="font-size:11px;font-weight:400;color:var(--text3)">(${d.rec>0?((d.ebit/d.rec)*100).toFixed(1):0}%)</span></span>
+      </div>
+      <div style="margin:8px 0 4px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">( - ) FINANCEIRO</div>
+      ${dreLinhaVertical('💳 Parcelas financiamento caminhões',-d.parcelas,d.rec)}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(59,130,246,0.08);border:1px solid var(--blue-bd);border-radius:var(--rsm);margin-top:10px">
+        <span style="font-size:14px;font-weight:800;color:var(--text)">= LUCRO LÍQUIDO</span>
+        <div style="text-align:right">
+          <div style="font-size:20px;font-weight:800;color:${d.lucro>=0?'var(--green)':'var(--red)'}">${fmt(d.lucro)}</div>
+          <div style="font-size:11px;color:var(--text3)">Margem: ${d.mg.toFixed(1)}%</div>
+        </div>
+      </div>
+      ${d.km>0?`<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Custo/km</div><div class="sc-val b" style="font-size:14px">${fmt((d.comb+d.pedagios+d.gFix+d.gVar)/Math.max(1,d.km))}</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Receita/km</div><div class="sc-val g" style="font-size:14px">${fmt(d.rec/Math.max(1,d.km))}</div></div>
+        <div class="sc" style="padding:.7rem"><div class="sc-lbl">Lucro/km</div><div class="sc-val ${d.lucro>=0?'g':'r'}" style="font-size:14px">${fmt(d.lucro/Math.max(1,d.km))}</div></div>
+      </div>`:''}
+    </div>`;
+  }
+}
+
+function dreRow(label,valores,total,cor,bold=false){
+  const style=bold?'font-weight:700;color:var(--text)':'color:var(--text2)';
+  const valStyle=(v)=>v>=0?`color:var(--${cor==='g'?'green':'red'})`:v<0?'color:var(--red)':'color:var(--text2)';
+  return`<tr>
+    <td style="${style};font-size:12px">${label}</td>
+    ${valores.map(v=>`<td style="text-align:right;font-size:12px;${valStyle(v)}">${v!==0?fmt(Math.abs(v)):'—'}</td>`).join('')}
+    <td style="text-align:right;font-size:12px;${valStyle(total)}">${total!==0?fmt(Math.abs(total)):'—'}</td>
+  </tr>`;
+}
+
+function dreLinhaVertical(label,valor,rec,bold=false,cor=null){
+  const pct=rec>0?Math.abs((valor/rec)*100):0;
+  const c=cor||(valor>=0?'var(--green)':'var(--red)');
+  return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+    <div>
+      <div style="font-size:${bold?'13':'12'}px;font-weight:${bold?'700':'500'};color:var(--text)">${label}</div>
+      ${!bold&&pct>0?`<div style="font-size:10px;color:var(--text3)">${pct.toFixed(1)}% da receita</div>`:''}
+    </div>
+    <span style="font-size:${bold?'15':'13'}px;font-weight:${bold?'800':'600'};color:${c}">${valor!==0?fmt(Math.abs(valor)):'—'}</span>
+  </div>`;
+}
+
+async function exportarDREPDF(){
+  const tipo=document.getElementById('dre-tipo')?.value||'mensal';
+  const mes=document.getElementById('dre-mes')?.value||new Date().toISOString().slice(0,7);
+  const [ano,m]=mes.split('-').map(Number);
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,pad=16;
+  // Cabeçalho
+  doc.setFillColor(15,17,22);doc.rect(0,0,W,38,'F');
+  doc.setFillColor(59,130,246);doc.rect(0,0,4,38,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(240,242,250);
+  doc.text('FretePro',pad,16);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(134,142,168);
+  doc.text('Demonstrativo de Resultado do Exercício (DRE)',pad,24);
+  const labelTipo=tipo==='mensal'?new Date(ano,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):tipo==='trimestral'?`${Math.floor((m-1)/3)+1}º Trimestre ${ano}`:`Ano ${ano}`;
+  doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(240,242,250);
+  doc.text(labelTipo.charAt(0).toUpperCase()+labelTipo.slice(1),pad,33);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(134,142,168);
+  doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')}`,W-pad,33,{align:'right'});
+  // Captura DRE content
+  const dreEl=document.getElementById('dre-content');
+  const canvas=await html2canvas(dreEl,{backgroundColor:'#101113',scale:1.5});
+  const imgData=canvas.toDataURL('image/png');
+  const imgW=W-pad*2,imgH=(canvas.height*imgW)/canvas.width;
+  let y=44;
+  if(imgH>250){
+    // Divide em páginas
+    const pageH=250;
+    let srcY=0;
+    while(srcY<canvas.height){
+      if(srcY>0)doc.addPage();
+      const sliceH=Math.min(pageH*(canvas.height/imgH),canvas.height-srcY);
+      const sliceCanvas=document.createElement('canvas');
+      sliceCanvas.width=canvas.width;sliceCanvas.height=sliceH;
+      sliceCanvas.getContext('2d').drawImage(canvas,0,srcY,canvas.width,sliceH,0,0,canvas.width,sliceH);
+      doc.addImage(sliceCanvas.toDataURL('image/png'),'PNG',pad,srcY===0?44:16,imgW,(sliceH*imgW)/canvas.width);
+      srcY+=sliceH;
+    }
+  } else {
+    doc.addImage(imgData,'PNG',pad,y,imgW,imgH);
+  }
+  doc.save(`dre-${mes}.pdf`);
+  toast('DRE exportado!');
+}
 function renderRelatorio(){
   const mes=document.getElementById('rel-mes').value;
   const fM=fretes.filter(f=>f.data&&f.data.startsWith(mes));
@@ -1321,11 +1569,12 @@ function go(sec){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.nv').forEach(b=>b.classList.remove('on'));
   document.getElementById('sec-'+sec).classList.add('on');
-  const idx={dashboard:0,rota:1,fretes:2,caminhoes:3,motoristas:4,abastecimento:5,financeiro:6,contas:7,gastos:8,relatorios:9}[sec];
+  const idx={dashboard:0,rota:1,fretes:2,caminhoes:3,motoristas:4,abastecimento:5,financeiro:6,contas:7,gastos:8,relatorios:9,dre:10}[sec];
   document.querySelectorAll('.nv')[idx].classList.add('on');
   if(sec==='rota')setTimeout(()=>{if(!map)initMap();},200);
   if(sec==='financeiro')renderFinanceiro();
   if(sec==='relatorios')renderRelatorio();
+  if(sec==='dre')renderDRE();
   if(sec==='abastecimento')renderAbast();
   if(sec==='contas')renderContas();
 }
