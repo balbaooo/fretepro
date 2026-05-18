@@ -9,46 +9,50 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#101113;--bg2:#17181d;--bg3:#1d1f26;--bg4:#24262e;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.2);
-  --text:#f0f2fa;--text2:#868ea8;--text3:#3d4560;
-  --accent:#3b82f6;--accent2:#1d4ed8;--accent-glow:rgba(59,130,246,0.22);--accent-subtle:rgba(59,130,246,0.1);
-  --green:#34d399;--green-bg:rgba(52,211,153,0.08);--green-bd:rgba(52,211,153,0.2);
-  --red:#fb7185;--red-bg:rgba(251,113,133,0.08);--red-bd:rgba(251,113,133,0.2);
-  --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.08);--amber-bd:rgba(251,191,36,0.2);
-  --blue-bg:rgba(59,130,246,0.1);--blue-bd:rgba(59,130,246,0.22);
-  --radius:16px;--rsm:10px;--sidebar:244px;
-  --shadow:0 8px 40px rgba(0,0,0,.6);--shadow-sm:0 4px 24px rgba(0,0,0,.4);--tr:.18s ease
+:root {
+  --bg:#0f1117; --bg2:#161920; --bg3:#1c1f2a; --bg4:#232736;
+  --border:rgba(255,255,255,0.055); --border2:rgba(255,255,255,0.1); --border3:rgba(255,255,255,0.18);
+  --text:#eef0f8; --text2:#7c85a2; --text3:#3e465e;
+  --accent:#6366f1; --accent2:#4f46e5; --accent-glow:rgba(99,102,241,0.22); --accent-subtle:rgba(99,102,241,0.08);
+  --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08); --amber-bd:rgba(245,158,11,0.22);
+  --green:#34d399; --green-bg:rgba(52,211,153,0.07); --green-bd:rgba(52,211,153,0.2);
+  --red:#f87171; --red-bg:rgba(248,113,113,0.07); --red-bd:rgba(248,113,113,0.2);
+  --blue-bg:rgba(99,102,241,0.08); --blue-bd:rgba(99,102,241,0.22);
+  --radius:14px; --rsm:9px; --sidebar:252px;
+  --shadow:0 8px 40px rgba(0,0,0,.55); --shadow-sm:0 4px 20px rgba(0,0,0,.4); --tr:.15s ease;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
-.syne{font-family:'Inter',sans-serif}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.55}
+
+/* SVG icon helper */
+.ic{display:inline-flex;flex-shrink:0;vertical-align:middle}
+.ic svg{display:block}
 
 /* AUTH */
 #auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;
-  background:radial-gradient(ellipse 75% 50% at 50% -5%,rgba(59,130,246,.14) 0%,transparent 65%),var(--bg)}
-.auth-card{background:var(--bg2);border:1px solid var(--border2);border-radius:22px;padding:2.75rem;width:100%;max-width:420px;
-  box-shadow:var(--shadow),0 0 100px rgba(59,130,246,.06)}
-.auth-logo{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:2.25rem}
-.auth-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),#1d4ed8);border-radius:14px;
-  display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 24px var(--accent-glow)}
-.auth-brand{font-family:'Inter',sans-serif;font-size:24px;font-weight:800}.auth-brand span{color:var(--accent)}
-.auth-title{font-size:19px;font-weight:700;text-align:center;margin-bottom:5px;font-family:'Inter',sans-serif}
-.auth-sub{color:var(--text2);font-size:13.5px;text-align:center;margin-bottom:1.75rem}
-.fg{margin-bottom:.95rem}
-.fg label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.fg input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
+  background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(99,102,241,.13) 0%,transparent 65%),var(--bg)}
+.auth-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2.5rem;width:100%;max-width:400px;
+  box-shadow:var(--shadow),0 0 80px rgba(99,102,241,.05)}
+.auth-logo{display:flex;align-items:center;gap:11px;justify-content:center;margin-bottom:2rem}
+.auth-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px var(--accent-glow);color:#fff}
+.auth-icon svg{width:22px;height:22px}
+.auth-brand{font-size:22px;font-weight:800}.auth-brand span{color:var(--accent)}
+.auth-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:4px}
+.auth-sub{color:var(--text2);font-size:13px;text-align:center;margin-bottom:1.5rem}
+.fg{margin-bottom:.85rem}
+.fg label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.fg input{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
   color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border-color var(--tr),box-shadow var(--tr)}
-.fg input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-.btn-auth{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
-  border-radius:var(--rsm);font-size:14.5px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin-top:.5rem;
-  transition:all var(--tr);box-shadow:0 4px 22px rgba(59,130,246,.32);letter-spacing:.02em}
-.btn-auth:hover{transform:translateY(-1px);box-shadow:0 6px 30px rgba(59,130,246,.44)}
+.fg input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.14)}
+.btn-auth{width:100%;padding:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+  border-radius:var(--rsm);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;margin-top:.4rem;
+  transition:all var(--tr);box-shadow:0 4px 18px rgba(99,102,241,.3)}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(99,102,241,.42)}
 .btn-auth:active{transform:translateY(0)}
-.auth-sw{text-align:center;margin-top:1.25rem;font-size:13.5px;color:var(--text2)}
+.auth-sw{text-align:center;margin-top:1.1rem;font-size:13px;color:var(--text2)}
 .auth-sw a{color:var(--accent);cursor:pointer;font-weight:500}
-.amsg{font-size:13px;padding:10px 14px;border-radius:var(--rsm);margin-bottom:1rem;display:none;font-weight:500}
+.amsg{font-size:13px;padding:9px 13px;border-radius:var(--rsm);margin-bottom:.9rem;display:none;font-weight:500}
 .amsg.err{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
 .amsg.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
 
@@ -57,106 +61,133 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* SIDEBAR */
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);
-  background:linear-gradient(180deg,#141519 0%,#101113 100%);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto}
-.sb-logo{display:flex;align-items:center;gap:10px;padding:1.3rem 1.2rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.sb-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),#1d4ed8);border-radius:9px;
-  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 14px var(--accent-glow)}
-.sb-brand{font-family:'Inter',sans-serif;font-size:16px;font-weight:800}.sb-brand span{color:var(--accent)}
-.sb-sec{padding:.85rem 1.15rem .3rem;font-size:9px;letter-spacing:.1em;color:var(--text3);font-weight:700;text-transform:uppercase;flex-shrink:0}
-.nv{display:flex;align-items:center;gap:9px;padding:8px 1rem 8px 14px;cursor:pointer;color:var(--text2);
-  font-size:13px;font-weight:500;transition:all var(--tr);margin:1px 8px;border-radius:var(--rsm);
-  border-left:2px solid transparent}
-.nv:hover{background:var(--bg4);color:var(--text)}
+  background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:1.2rem 1.15rem 1rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px var(--accent-glow);color:#fff}
+.sb-icon svg{width:15px;height:15px}
+.sb-brand{font-size:15px;font-weight:800}.sb-brand span{color:var(--accent)}
+.sb-sec{padding:.9rem 1.15rem .25rem;font-size:9px;letter-spacing:.1em;color:var(--text3);font-weight:700;text-transform:uppercase;flex-shrink:0}
+.nv{display:flex;align-items:center;gap:9px;padding:7.5px 1rem 7.5px 13px;cursor:pointer;color:var(--text2);
+  font-size:13px;font-weight:500;transition:all var(--tr);margin:1px 8px;border-radius:var(--rsm);border-left:2px solid transparent}
+.nv:hover{background:var(--bg3);color:var(--text)}
 .nv.on{background:var(--accent-subtle);color:var(--accent);font-weight:600;border-left-color:var(--accent)}
 .nv-ic{width:15px;height:15px;flex-shrink:0}
-.sb-foot{margin-top:auto;padding:1rem 1.15rem;border-top:1px solid var(--border);flex-shrink:0}
-.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:.75rem}
-.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1d4ed8);
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;box-shadow:0 2px 10px var(--accent-glow)}
+.sb-foot{margin-top:auto;padding:.9rem 1.15rem;border-top:1px solid var(--border);flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:.7rem}
+.sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .sb-email{font-size:11.5px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.btn-out{width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:var(--rsm);
-  color:var(--text2);font-size:12px;cursor:pointer;transition:all var(--tr);font-family:'Inter',sans-serif;font-weight:500}
+.btn-out{width:100%;padding:7px 10px;background:transparent;border:1px solid var(--border2);border-radius:var(--rsm);
+  color:var(--text2);font-size:12px;cursor:pointer;transition:all var(--tr);font-family:'Inter',sans-serif;font-weight:500;
+  display:flex;align-items:center;gap:6px;justify-content:center}
+.btn-out svg{width:13px;height:13px}
 .btn-out:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
 
 /* MAIN */
-.main{margin-left:var(--sidebar);padding:1.75rem;min-height:100vh}
-.pg-hdr{margin-bottom:1.5rem}
-.page-title{font-size:22px;font-weight:800;margin-bottom:4px;font-family:'Inter',sans-serif}
+.main{margin-left:var(--sidebar);padding:2rem;min-height:100vh}
+.pg-hdr{margin-bottom:1.75rem}
+.page-title{font-size:20px;font-weight:700;margin-bottom:3px;letter-spacing:-.02em}
 .page-sub{color:var(--text2);font-size:13px}
 
 /* STAT CARDS */
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:1.4rem}
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:1.5rem}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.15rem;
   position:relative;overflow:hidden;transition:transform var(--tr),border-color var(--tr),box-shadow var(--tr);
-  box-shadow:0 2px 16px rgba(0,0,0,.35)}
-.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity var(--tr)}
+  box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background var(--tr)}
+.sc:has(.sc-val.g)::before{background:linear-gradient(90deg,var(--green),transparent)}
+.sc:has(.sc-val.r)::before{background:linear-gradient(90deg,var(--red),transparent)}
+.sc:has(.sc-val.a)::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.sc:has(.sc-val.b)::before{background:linear-gradient(90deg,var(--accent),transparent)}
 .sc:hover{transform:translateY(-2px);border-color:var(--border2);box-shadow:var(--shadow-sm)}
-.sc:hover::after{opacity:1}
-.sc-lbl{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;font-weight:700}
-.sc-val{font-size:20px;font-weight:700;font-family:'Inter',sans-serif}
+.sc-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-weight:700}
+.sc-val{font-size:21px;font-weight:700}
 .sc-val.g{color:var(--green)}.sc-val.r{color:var(--red)}.sc-val.b{color:var(--accent)}.sc-val.a{color:var(--amber)}
 
 /* PANELS */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 4px 24px rgba(0,0,0,.35)}
-.panel-title{font-size:14px;font-weight:700;margin-bottom:1.1rem;color:var(--text);font-family:'Inter',sans-serif}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.35rem;margin-bottom:1.25rem;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+.panel-title{font-size:13px;font-weight:600;margin-bottom:1.15rem;color:var(--text);letter-spacing:-.01em;
+  display:flex;align-items:center;gap:7px}
+.panel-title svg{width:15px;height:15px;color:var(--accent);flex-shrink:0;opacity:.9}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
 
 /* FORMS */
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .fr.t{grid-template-columns:1fr 1fr 1fr}.fr.f{grid-template-columns:1fr}
 .fld label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.fld input,.fld select,.fld textarea{width:100%;padding:8px 11px;background:var(--bg3);border:1px solid var(--border2);
+.fld input,.fld select,.fld textarea{width:100%;padding:8.5px 11px;background:var(--bg3);border:1px solid var(--border2);
   border-radius:var(--rsm);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;
   transition:border-color var(--tr),box-shadow var(--tr)}
-.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.13)}
-.fld select option{background:var(--bg3)}.fld textarea{resize:vertical;min-height:54px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.fld select option{background:var(--bg3)}.fld textarea{resize:vertical;min-height:56px}
+.section-label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px;display:flex;align-items:center;gap:5px}
+.section-label svg{width:13px;height:13px}
 
-/* BUTTONS */
-.btn-s{padding:8px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
-  border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--tr);
+/* BUTTONS — hierarchy: primary > secondary > ghost */
+.btn-s{padding:8px 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+  border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--tr);
   display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;
-  box-shadow:0 2px 12px rgba(59,130,246,.28);letter-spacing:.01em}
-.btn-s:hover{transform:translateY(-1px);box-shadow:0 4px 22px rgba(59,130,246,.4)}
+  box-shadow:0 2px 10px rgba(99,102,241,.28);letter-spacing:.01em}
+.btn-s:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(99,102,241,.4)}
 .btn-s:active{transform:translateY(0)}
-.btn-s.gn{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 2px 12px rgba(34,197,94,.22)}
-.btn-s.gn:hover{box-shadow:0 4px 22px rgba(34,197,94,.35)}
-.btn-del{padding:4px 8px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);
-  border-radius:6px;cursor:pointer;font-size:11.5px;transition:all var(--tr)}
+.btn-s svg{width:14px;height:14px}
+.btn-s.gn{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 2px 10px rgba(34,197,94,.2)}
+.btn-s.gn:hover{box-shadow:0 4px 18px rgba(34,197,94,.33)}
+/* secondary */
+.btn-sec{padding:8px 14px;background:transparent;color:var(--text2);border:1px solid var(--border2);
+  border-radius:var(--rsm);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--tr);
+  display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif}
+.btn-sec:hover{color:var(--text);border-color:var(--border3);background:var(--bg3)}
+.btn-sec svg{width:14px;height:14px}
+/* ghost / icon-only */
+.btn-ghost{padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);
+  border-radius:var(--rsm);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--tr);
+  display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif}
+.btn-ghost:hover{color:var(--text);border-color:var(--border3)}
+.btn-ghost svg{width:14px;height:14px}
+/* delete */
+.btn-del{padding:5px 9px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);
+  border-radius:7px;cursor:pointer;font-size:12px;transition:all var(--tr);display:inline-flex;align-items:center;gap:4px}
+.btn-del svg{width:12px;height:12px}
 .btn-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
+/* edit */
+.btn-edit{padding:5px 9px;background:var(--blue-bg);color:var(--accent);border:1px solid var(--blue-bd);
+  border-radius:7px;cursor:pointer;font-size:12px;transition:all var(--tr);margin-right:4px;display:inline-flex;align-items:center;gap:4px}
+.btn-edit svg{width:12px;height:12px}
+.btn-edit:hover{background:var(--accent);color:#fff}
 
 /* TABLES */
-.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
-.tbl th{text-align:left;padding:8px 10px;color:var(--text3);font-weight:700;font-size:9.5px;letter-spacing:.07em;
-  text-transform:uppercase;border-bottom:1px solid var(--border2);background:rgba(255,255,255,.02);white-space:nowrap}
-.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);transition:background var(--tr)}
-.tbl td strong{color:var(--text)}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 12px;color:var(--text3);font-weight:700;font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;border-bottom:1px solid var(--border2);background:rgba(255,255,255,.015);white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);transition:background var(--tr)}
+.tbl td strong{color:var(--text)}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(255,255,255,.02)}
 .tbl-wrap{overflow-x:auto}
 
 /* BADGES */
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:10.5px;font-weight:600;letter-spacing:.02em}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.01em}
 .badge.g{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
 .badge.r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
 .badge.a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
 .badge.b{background:var(--blue-bg);color:var(--accent);border:1px solid var(--blue-bd)}
-.badge.gr{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border2)}
+.badge.gr{background:rgba(255,255,255,.04);color:var(--text2);border:1px solid var(--border2)}
 
 /* FILTERS */
 .filt{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.filt select,.filt input{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
-  color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;transition:border-color var(--tr)}
+.filt select,.filt input{padding:7.5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);
+  color:var(--text);font-size:13px;font-family:'Inter',sans-serif;transition:border-color var(--tr)}
 .filt select:focus,.filt input:focus{outline:none;border-color:var(--accent)}
 
 /* MISC */
-.empty{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.empty{text-align:center;padding:2.25rem;color:var(--text3);font-size:13px}
 .prog{height:5px;background:var(--bg4);border-radius:100px;overflow:hidden;margin-top:5px}
 .prog-f{height:100%;border-radius:100px;transition:width .5s ease}
-.prog-lg{height:12px;background:var(--bg4);border-radius:100px;overflow:hidden;margin-top:8px}
+.prog-lg{height:10px;background:var(--bg4);border-radius:100px;overflow:hidden;margin-top:8px}
 .sec{display:none}.sec.on{display:block}
 
 /* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:var(--rsm);font-size:13px;
+#toast{position:fixed;bottom:24px;right:24px;padding:10px 16px;border-radius:var(--rsm);font-size:13px;
   font-weight:600;z-index:9999;display:none;box-shadow:var(--shadow)}
 #toast.ok{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
 #toast.err{background:linear-gradient(135deg,var(--red),#dc2626);color:#fff}
@@ -176,46 +207,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .rr{background:var(--bg3);border-radius:var(--rsm);padding:.9rem;text-align:center;border:1px solid var(--border);transition:border-color var(--tr)}
 .rr:hover{border-color:var(--border2)}
 .rr-lbl{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;font-weight:700}
-.rr-val{font-size:17px;font-weight:700;font-family:'Inter',sans-serif}
+.rr-val{font-size:17px;font-weight:700}
 
 /* FINANCIAL TABS */
-.fin-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:1.25rem;flex-wrap:wrap}
-.fin-tab{padding:8px 15px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;
+.fin-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.25rem;flex-wrap:wrap}
+.fin-tab{padding:8px 16px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;
   font-size:13px;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;transition:all var(--tr);margin-bottom:-1px}
 .fin-tab:hover{color:var(--text)}
 .fin-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .fin-panel{display:none}.fin-panel.on{display:block}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:1.5rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
-.modal-title{font-size:16px;font-weight:700;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
-.modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:0;line-height:1}
-.modal-close:hover{color:var(--text)}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;padding:4px;border-radius:6px;line-height:1;transition:all var(--tr);display:flex}
+.modal-close:hover{color:var(--text);background:var(--bg3)}
+.modal-close svg{width:17px;height:17px}
 .btn-edit{padding:4px 8px;background:var(--blue-bg);color:var(--accent);border:1px solid var(--blue-bd);border-radius:6px;cursor:pointer;font-size:11.5px;transition:all var(--tr);margin-right:4px}
 .btn-edit:hover{background:var(--accent);color:#fff}
 .cc{background:var(--bg3);border-radius:var(--rsm);padding:1rem;border:1px solid var(--border);margin-bottom:.7rem;transition:border-color var(--tr)}
 .cc:hover{border-color:var(--border2)}
 .cc-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:.3rem}
-.cc-val{font-size:19px;font-weight:700;font-family:'Inter',sans-serif;color:var(--red)}.cc-sub{font-size:10.5px;color:var(--text3);margin-top:2px}
+.cc-val{font-size:19px;font-weight:700;color:var(--red)}.cc-sub{font-size:10.5px;color:var(--text3);margin-top:2px}
 
 /* BREAKEVEN */
-.pe-box{background:linear-gradient(135deg,rgba(59,130,246,.09),rgba(52,211,153,.06));border:1px solid var(--border2);
+.pe-box{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(52,211,153,.05));border:1px solid var(--border2);
   border-radius:var(--radius);padding:1.35rem;margin-bottom:1.25rem;text-align:center}
 .pe-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.4rem}
-.pe-val{font-size:28px;font-weight:800;font-family:'Inter',sans-serif;color:var(--accent)}.pe-sub{font-size:12px;color:var(--text3);margin-top:.3rem}
+.pe-val{font-size:28px;font-weight:800;color:var(--accent)}.pe-sub{font-size:12px;color:var(--text3);margin-top:.3rem}
 
 /* META */
 .meta-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem}
 .meta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem}
-.meta-title{font-size:14px;font-weight:700;color:var(--text);font-family:'Inter',sans-serif}
-.meta-pct{font-size:22px;font-weight:800;font-family:'Inter',sans-serif}
+.meta-title{font-size:13px;font-weight:700;color:var(--text)}
+.meta-pct{font-size:22px;font-weight:800}
 </style>
 </head>
 <body>
 <div id="auth-wrap" style="display: none;">
   <div class="auth-card">
-    <div class="auth-logo"><div class="auth-icon">🚛</div><div class="auth-brand">Frete<span>Pro</span></div></div>
+    <div class="auth-logo"><div class="auth-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="auth-brand">Frete<span>Pro</span></div></div>
     <div id="amsg" class="amsg"></div>
     <div id="f-login">
       <div class="auth-title">Bem-vindo de volta</div>
@@ -239,7 +271,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div id="app-wrap" style="display: block;">
   <div class="sidebar">
-    <div class="sb-logo"><div class="sb-icon">🚛</div><div class="sb-brand">Frete<span>Pro</span></div></div>
+    <div class="sb-logo"><div class="sb-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="sb-brand">Frete<span>Pro</span></div></div>
     <div style="flex:1;overflow-y:auto;padding-bottom:.5rem">
       <div class="sb-sec" style="margin-top:.5rem">Principal</div>
       <div class="nv on" onclick="go(&#39;dashboard&#39;)"><svg class="nv-ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"></rect><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"></rect></svg>Painel</div>
@@ -258,7 +290,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
     <div class="sb-foot">
       <div class="sb-user"><div class="sb-av" id="sb-av">F</div><div class="sb-email" id="sb-email">febalbao@gmail.com</div></div>
-      <button class="btn-out" onclick="logout()">Sair da conta</button>
+      <button class="btn-out" onclick="logout()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</button>
     </div>
   </div>
 
@@ -274,16 +306,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val b">0 km</div></div>
     <div class="sc"><div class="sc-lbl">Caminhões</div><div class="sc-val b">1</div></div></div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title">🚛 Fretes recentes</div><div id="dash-fr"><div class="empty">Nenhum frete ainda</div></div></div>
-        <div class="panel"><div class="panel-title">💳 Contas a receber</div><div id="dash-contas"><div class="empty">Nenhuma conta pendente ✅</div></div></div>
+        <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Fretes recentes</div><div id="dash-fr"><div class="empty">Nenhum frete ainda</div></div></div>
+        <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Contas a receber</div><div id="dash-contas"><div class="empty">Nenhuma conta pendente</div></div></div>
       </div>
-      <div class="panel"><div class="panel-title">⛽ Últimos abastecimentos</div><div id="dash-abast"><div class="empty">Nenhum abastecimento ainda</div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Últimos abastecimentos</div><div id="dash-abast"><div class="empty">Nenhum abastecimento ainda</div></div></div>
     </div>
 
     <div id="sec-rota" class="sec">
       <div class="pg-hdr"><div class="page-title">Calculadora de Rota</div><div class="page-sub">Calcule pedágios e custos por cidade</div></div>
       <div class="panel">
-        <div class="panel-title">📍 Definir rota</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Definir rota</div>
         <div class="fr"><div class="fld"><label>Origem (cidade, UF)</label><input id="rt-orig" placeholder="Ex: São Paulo, SP"></div><div class="fld"><label>Destino (cidade, UF)</label><input id="rt-dest" placeholder="Ex: Curitiba, PR"></div></div>
         <div class="fr t">
           <div class="fld"><label>Caminhão</label><select id="rt-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div>
@@ -291,31 +323,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="fld"><label>Consumo (km/l)</label><input id="rt-consumo" type="number" value="3.5" step="0.1"></div>
         </div>
         <div class="fr"><div class="fld"><label>Preço diesel (R$/L)</label><input id="rt-diesel" type="number" value="6.20" step="0.01"></div><div class="fld"><label>Valor do frete (R$)</label><input id="rt-valor" type="number" placeholder="Opcional"></div></div>
-        <button class="btn-s" onclick="calcRota()">🗺️ Calcular rota e pedágios</button>
+        <button class="btn-s" onclick="calcRota()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Calcular rota e pedágios</button>
       </div>
       <div id="rota-result" style="display:none">
         <div class="rr-grid" id="rota-cards"></div>
         <div class="two-col">
           <div><div id="map"></div></div>
           <div class="panel" style="margin-bottom:0;max-height:380px;overflow-y:auto">
-            <div class="panel-title">🛣️ Pedágios na rota</div>
+            <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>Pedágios na rota</div>
             <div id="toll-list"></div>
             <div id="toll-total" style="margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--border)"></div>
           </div>
         </div>
         <div class="panel" style="margin-top:1.1rem">
-          <div class="panel-title">💰 Análise financeira</div>
+          <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Análise financeira</div>
           <div id="rota-analise"></div>
-          <button class="btn-s gn" style="margin-top:.9rem" onclick="registrarFreteDaRota()">✅ Registrar este frete</button>
+          <button class="btn-s gn" style="margin-top:.9rem" onclick="registrarFreteDaRota()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Registrar este frete</button>
         </div>
       </div>
-      <div class="panel" style="margin-top:1.1rem"><div class="panel-title">📊 Rotas mais lucrativas</div><div id="hist-rotas"><div class="empty">Registre fretes concluídos para ver o ranking</div></div></div>
+      <div class="panel" style="margin-top:1.1rem"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Rotas mais lucrativas</div><div id="hist-rotas"><div class="empty">Registre fretes concluídos para ver o ranking</div></div></div>
     </div>
 
     <div id="sec-fretes" class="sec">
       <div class="pg-hdr"><div class="page-title">Fretes</div><div class="page-sub">Registre e acompanhe suas viagens</div></div>
       <div class="panel">
-        <div class="panel-title">➕ Registrar frete</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Registrar frete</div>
         <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="f-dt" type="date"></div><div class="fld"><label>Cliente</label><input id="f-cli" placeholder="Nome do cliente"></div></div>
         <div class="fr"><div class="fld"><label>Origem</label><input id="f-ori" placeholder="Cidade, Estado"></div><div class="fld"><label>Destino</label><input id="f-des" placeholder="Cidade, Estado"></div></div>
@@ -326,10 +358,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="fld"><label>Status viagem</label><select id="f-st"><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select></div>
         </div>
         <div class="fr"><div class="fld"><label>Vencimento pagamento</label><input id="f-venc" type="date"></div><div class="fld"><label>Observações</label><input id="f-obs" placeholder="Notas..."></div></div>
-        <button class="btn-s" onclick="salvarFrete()">💾 Salvar frete</button>
+        <button class="btn-s" onclick="salvarFrete()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar frete</button>
       </div>
       <div class="panel">
-        <div class="panel-title">📋 Histórico</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Histórico</div>
         <div class="filt">
           <select id="ff-cam" onchange="renderFretes()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
           <select id="ff-st" onchange="renderFretes()"><option value="">Todos os status</option><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select>
@@ -342,7 +374,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="sec-caminhoes" class="sec">
       <div class="pg-hdr"><div class="page-title">Caminhões</div><div class="page-sub">Gerencie sua frota</div></div>
       <div class="panel">
-        <div class="panel-title">➕ Cadastrar caminhão</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Cadastrar caminhão</div>
         <div class="fr t"><div class="fld"><label>Placa</label><input id="c-pla" placeholder="ABC-1234"></div><div class="fld"><label>Modelo</label><input id="c-mod" placeholder="Scania R450"></div><div class="fld"><label>Ano</label><input id="c-ano" type="number" placeholder="2022"></div></div>
         <div class="fr t">
           <div class="fld"><label>Tipo</label><select id="c-tip"><option>Truck (6 eixos)</option><option>Carreta (9 eixos)</option><option>Bitruck (8 eixos)</option><option>Toco (4 eixos)</option><option>Outro</option></select></div>
@@ -350,42 +382,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="fld"><label>Status</label><select id="c-st"><option>Disponível</option><option>Em viagem</option><option>Manutenção</option></select></div>
         </div>
         <div class="fr"><div class="fld"><label>Consumo médio (km/l)</label><input id="c-cons" type="number" placeholder="3.5" step="0.1"></div><div class="fld"><label>Vencimento seguro</label><input id="c-seg" type="date"></div></div>
-        <div style="margin:8px 0 4px;font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em">💳 Financiamento (opcional)</div>
+        <div class="section-label"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Financiamento (opcional)</div>
         <div class="fr t">
           <div class="fld"><label>Valor da parcela (R$)</label><input id="c-parc" type="number" placeholder="0.00" step="0.01"></div>
           <div class="fld"><label>Parcelas restantes</label><input id="c-parc-n" type="number" placeholder="Ex: 36"></div>
           <div class="fld"><label>Vencimento parcela (dia)</label><input id="c-parc-dia" type="number" placeholder="Ex: 10" min="1" max="31"></div>
         </div>
         <div class="fr f"><div class="fld"><label>Observações</label><textarea id="c-obs"></textarea></div></div>
-        <button class="btn-s" onclick="salvarCaminhao()">💾 Salvar</button>
+        <button class="btn-s" onclick="salvarCaminhao()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar</button>
       </div>
-      <div class="panel"><div class="panel-title">🚚 Frota</div><div class="tbl-wrap"><div id="lista-cam"><table class="tbl"><thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Tipo</th><th>Eixos</th><th>Consumo</th><th>Status</th><th>Seguro</th><th></th></tr></thead><tbody><tr><td><strong>ABC2135</strong></td><td>SCANIA R450</td><td>2025</td><td>Carreta (9 eixos)</td><td>9</td><td>1.5 km/l</td><td><span class="badge g">Disponível</span></td><td><span class="badge g">2026-12-20</span></td><td><button class="btn-del" onclick="del(&#39;caminhoes&#39;,&#39;ef8d010c-1966-4e3f-820b-6d96749cda21&#39;)">🗑</button></td></tr></tbody></table></div></div></div>
-      <div class="panel"><div class="panel-title">📈 Retorno por caminhão</div><div id="roi-cam"></div></div>
-      <div class="panel"><div class="panel-title">💳 Financiamentos</div><div id="financiamentos-cam"><div class="empty">Nenhum financiamento cadastrado</div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="14" height="11" rx="1"/><path d="M16 10h4l2 3v4h-6V10z"/><circle cx="6" cy="20" r="2"/><circle cx="18" cy="20" r="2"/></svg>Frota</div><div class="tbl-wrap"><div id="lista-cam"><table class="tbl"><thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Tipo</th><th>Eixos</th><th>Consumo</th><th>Status</th><th>Seguro</th><th></th></tr></thead><tbody><tr><td><strong>ABC2135</strong></td><td>SCANIA R450</td><td>2025</td><td>Carreta (9 eixos)</td><td>9</td><td>1.5 km/l</td><td><span class="badge g">Disponível</span></td><td><span class="badge g">2026-12-20</span></td><td><button class="btn-del" onclick="del(&#39;caminhoes&#39;,&#39;ef8d010c-1966-4e3f-820b-6d96749cda21&#39;)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td></tr></tbody></table></div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Retorno por caminhão</div><div id="roi-cam"></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Financiamentos</div><div id="financiamentos-cam"><div class="empty">Nenhum financiamento cadastrado</div></div></div>
     </div>
 
     <div id="sec-motoristas" class="sec">
       <div class="pg-hdr"><div class="page-title">Motoristas</div><div class="page-sub">Gerencie sua equipe</div></div>
       <div class="panel">
-        <div class="panel-title">➕ Cadastrar motorista</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Cadastrar motorista</div>
         <div class="fr"><div class="fld"><label>Nome completo</label><input id="m-nom" placeholder="João da Silva"></div><div class="fld"><label>Telefone</label><input id="m-tel" placeholder="(11) 99999-9999"></div></div>
         <div class="fr"><div class="fld"><label>CNH</label><input id="m-cnh" placeholder="Número da CNH"></div><div class="fld"><label>Vencimento CNH</label><input id="m-vcnh" type="date"></div></div>
         <div class="fr"><div class="fld"><label>Salário fixo (R$)</label><input id="m-sal" type="number" placeholder="0.00"></div><div class="fld"><label>% por frete</label><input id="m-pct" type="number" placeholder="Ex: 10"></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><textarea id="m-obs"></textarea></div></div>
-        <button class="btn-s" onclick="salvarMotorista()">💾 Salvar</button>
+        <button class="btn-s" onclick="salvarMotorista()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar</button>
       </div>
-      <div class="panel"><div class="panel-title">👥 Motoristas</div><div class="tbl-wrap"><div id="lista-mot"><div class="empty">Nenhum motorista cadastrado</div></div></div></div>
-      <div class="panel"><div class="panel-title">💰 Comissões este mês</div><div id="comissoes"><div class="empty">Sem motoristas</div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Motoristas</div><div class="tbl-wrap"><div id="lista-mot"><div class="empty">Nenhum motorista cadastrado</div></div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Comissões este mês</div><div id="comissoes"><div class="empty">Sem motoristas</div></div></div>
     </div>
 
     <div id="sec-abastecimento" class="sec">
       <div class="pg-hdr"><div class="page-title">Abastecimento</div><div class="page-sub">Controle de combustível e consumo real</div></div>
       <div class="panel">
-        <div class="panel-title">⛽ Registrar abastecimento</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>Registrar abastecimento</div>
         <div class="fr"><div class="fld"><label>Caminhão</label><select id="a-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="a-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="a-dt" type="date"></div><div class="fld"><label>Posto</label><input id="a-posto" placeholder="Nome do posto"></div></div>
         <div class="fr t">
-          <div class="fld"><label>Tipo de combustível</label><select id="a-tipo" onchange="toggleArla()"><option value="Diesel S10">⛽ Diesel S10</option><option value="Diesel S500">⛽ Diesel S500</option><option value="Arla 32">🧪 Arla 32</option></select></div>
+          <div class="fld"><label>Tipo de combustível</label><select id="a-tipo" onchange="toggleArla()"><option value="Diesel S10">Diesel S10</option><option value="Diesel S500">Diesel S500</option><option value="Arla 32">Arla 32</option></select></div>
           <div class="fld"><label>Litros</label><input id="a-litros" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
           <div class="fld"><label>Preço por litro (R$)</label><input id="a-preco" type="number" placeholder="0.00" step="0.01" oninput="calcAbast()"></div>
         </div>
@@ -396,16 +428,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
         <div class="fr"><div class="fld"><label>Km atual (odômetro)</label><input id="a-km" type="number" placeholder="Ex: 125000"></div><div class="fld"><label>Km/L real (calculado)</label><input id="a-kml" readonly="" placeholder="Automático" style="opacity:.6"></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><input id="a-obs" placeholder="Notas..."></div></div>
-        <button class="btn-s" onclick="salvarAbast()">💾 Salvar abastecimento</button>
+        <button class="btn-s" onclick="salvarAbast()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar abastecimento</button>
       </div>
       <div class="sgrid" id="abast-resumo">
     <div class="sc"><div class="sc-lbl">Diesel este mês</div><div class="sc-val b">0.0L</div></div>
     <div class="sc"><div class="sc-lbl">Arla 32 este mês</div><div class="sc-val b">0.0L</div></div>
     <div class="sc"><div class="sc-lbl">Gasto combustível</div><div class="sc-val r">R$ 0,00</div></div>
     <div class="sc"><div class="sc-lbl">Km/L médio</div><div class="sc-val a">—</div></div></div>
-      <div class="panel"><div class="panel-title">📊 Consumo por caminhão</div><div id="abast-por-cam"></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Consumo por caminhão</div><div id="abast-por-cam"></div></div>
       <div class="panel">
-        <div class="panel-title">📋 Histórico</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Histórico</div>
         <div class="filt">
           <select id="af-cam" onchange="renderAbast()"><option value="">Todos os caminhões</option></select>
           <select id="af-tipo" onchange="renderAbast()"><option value="">Todos os tipos</option><option value="Diesel S10">Diesel S10</option><option value="Diesel S500">Diesel S500</option><option value="Arla 32">Arla 32</option></select>
@@ -420,8 +452,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end">
         <div class="fld"><label>Período</label><input type="month" id="fin-mes" onchange="renderFinanceiro()"></div>
         <div class="fld" style="flex:1;min-width:180px"><label>Meta de faturamento (R$)</label><input id="meta-val" type="number" placeholder="Ex: 50000"></div>
-        <button class="btn-s" onclick="salvarMeta()">🎯 Salvar meta</button>
-        <button class="btn-s" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)" onclick="renderFinanceiro()">🔄</button>
+        <button class="btn-s" onclick="salvarMeta()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Salvar meta</button>
+        <button class="btn-ghost" onclick="renderFinanceiro()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
       </div>
       <div class="meta-box" id="meta-fin" style="display:none"></div>
       <div class="sgrid" id="fin-stats">
@@ -431,8 +463,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="sc"><div class="sc-lbl">Total gastos</div><div class="sc-val r">R$ 0,00</div></div>
     <div class="sc"><div class="sc-lbl">Lucro líquido</div><div class="sc-val g">R$ 0,00</div></div>
     <div class="sc"><div class="sc-lbl">Custo/km</div><div class="sc-val b">R$ 0,00</div></div></div>
-      <div class="pe-box" id="pe-box"><div class="pe-lbl">Ponto de equilíbrio mensal</div><div class="pe-val">R$ 0,00</div><div class="pe-sub">✅ Superou em R$ 0,00 · Margem: 0%</div></div>
-      <div class="panel"><div class="panel-title">📅 Comparativo — últimos 4 meses</div><div id="comparativo"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px"><div class="sc" style="text-align:center"><div class="sc-lbl">jan. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">fev. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">mar. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">abr. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div></div></div></div>
+      <div class="pe-box" id="pe-box"><div class="pe-lbl">Ponto de equilíbrio mensal</div><div class="pe-val">R$ 0,00</div><div class="pe-sub">Superou em R$ 0,00 · Margem: 0%</div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Comparativo — últimos 4 meses</div><div id="comparativo"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px"><div class="sc" style="text-align:center"><div class="sc-lbl">jan. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">fev. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">mar. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div><div class="sc" style="text-align:center"><div class="sc-lbl">abr. de 26</div><div class="sc-val g" style="font-size:15px">R$ 0,00</div><div style="font-size:10px;color:var(--text3);margin-top:2px">R$ 0,00 rec.</div></div></div></div></div>
       <div class="fin-tabs">
         <button class="fin-tab on" onclick="finTab(&#39;fix&#39;)">Custos fixos</button>
         <button class="fin-tab" onclick="finTab(&#39;var&#39;)">Custos variáveis</button>
@@ -442,29 +474,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div id="fin-fix" class="fin-panel on">
         <div class="two-col">
           <div class="panel">
-            <div class="panel-title">➕ Custo fixo</div>
+            <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Custo fixo</div>
             <div class="fr"><div class="fld"><label>Categoria</label><select id="cf-cat"><option>IPVA</option><option>Seguro do caminhão</option><option>Financiamento / Parcela</option><option>Salário fixo motorista</option><option>Licenciamento</option><option>Contador</option><option>Telefone / Internet</option><option>Imposto</option><option>Outros fixos</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cf-val" type="number" placeholder="0.00"></div></div>
             <div class="fr"><div class="fld"><label>Caminhão</label><select id="cf-cam"><option value="">Geral</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Mês</label><input id="cf-mes" type="month"></div></div>
             <div class="fr f"><div class="fld"><label>Descrição</label><input id="cf-desc" placeholder="Detalhe..."></div></div>
-            <button class="btn-s" onclick="salvarGasto(&#39;fixo&#39;)">💾 Salvar</button>
+            <button class="btn-s" onclick="salvarGasto(&#39;fixo&#39;)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar</button>
           </div>
-          <div class="panel"><div class="panel-title">📊 Fixos do mês</div><div id="fin-fix-lista"><div class="empty">Sem custos fixos</div></div></div>
+          <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Fixos do mês</div><div id="fin-fix-lista"><div class="empty">Sem custos fixos</div></div></div>
         </div>
       </div>
       <div id="fin-var" class="fin-panel">
         <div class="two-col">
           <div class="panel">
-            <div class="panel-title">➕ Custo variável</div>
+            <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Custo variável</div>
             <div class="fr"><div class="fld"><label>Categoria</label><select id="cv-cat"><option>Combustível</option><option>Pedágio</option><option>Pneus / Recapagem</option><option>Manutenção preventiva</option><option>Manutenção corretiva</option><option>Lavagem</option><option>Alimentação motorista</option><option>Hospedagem / Diária</option><option>Ajuda de custo</option><option>Outros variáveis</option></select></div><div class="fld"><label>Valor (R$)</label><input id="cv-val" type="number" placeholder="0.00"></div></div>
             <div class="fr"><div class="fld"><label>Caminhão</label><select id="cv-cam"><option value="">Geral</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Data</label><input id="cv-dt" type="date"></div></div>
             <div class="fr f"><div class="fld"><label>Descrição</label><textarea id="cv-desc"></textarea></div></div>
-            <button class="btn-s" onclick="salvarGasto(&#39;variavel&#39;)">💾 Salvar</button>
+            <button class="btn-s" onclick="salvarGasto(&#39;variavel&#39;)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar</button>
           </div>
-          <div class="panel"><div class="panel-title">📊 Variáveis do mês</div><div id="fin-var-lista"><div class="empty">Sem custos variáveis</div></div></div>
+          <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Variáveis do mês</div><div id="fin-var-lista"><div class="empty">Sem custos variáveis</div></div></div>
         </div>
       </div>
-      <div id="fin-km" class="fin-panel"><div class="panel"><div class="panel-title">📏 Custo por Km</div><div id="fin-km-lista"><div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--accent)">R$ 0,00<span style="font-size:10px;font-weight:400;color:var(--text3)">/km</span></span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">0 km rodados · R$ 0,00 gastos</div></div></div></div></div>
-      <div id="fin-cam" class="fin-panel"><div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="fin-cam-lista"><div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Rec: R$ 0,00 · Gastos: R$ 0,00 · Margem: 0%</div><div class="prog"><div class="prog-f" style="width:0%;background:var(--green)"></div></div></div></div></div></div>
+      <div id="fin-km" class="fin-panel"><div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>Custo por Km</div><div id="fin-km-lista"><div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--accent)">R$ 0,00<span style="font-size:10px;font-weight:400;color:var(--text3)">/km</span></span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">0 km rodados · R$ 0,00 gastos</div></div></div></div></div>
+      <div id="fin-cam" class="fin-panel"><div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Por caminhão</div><div id="fin-cam-lista"><div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13.5px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:14px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Rec: R$ 0,00 · Gastos: R$ 0,00 · Margem: 0%</div><div class="prog"><div class="prog-f" style="width:0%;background:var(--green)"></div></div></div></div></div></div>
     </div>
 
     <div id="sec-contas" class="sec">
@@ -475,14 +507,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="sc"><div class="sc-lbl">Recebido</div><div class="sc-val g">R$ 0,00</div></div>
     <div class="sc"><div class="sc-lbl">Total contas</div><div class="sc-val b">0</div></div></div>
       <div class="panel">
-        <div class="panel-title">➕ Nova conta</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova conta</div>
         <div class="fr"><div class="fld"><label>Cliente</label><input id="cr-cli" placeholder="Nome do cliente"></div><div class="fld"><label>Valor (R$)</label><input id="cr-val" type="number" placeholder="0.00"></div></div>
         <div class="fr"><div class="fld"><label>Vencimento</label><input id="cr-venc" type="date"></div><div class="fld"><label>Status</label><select id="cr-st"><option>Pendente</option><option>Recebido</option><option>Parcial</option><option>Atrasado</option></select></div></div>
         <div class="fr f"><div class="fld"><label>Observações</label><input id="cr-obs" placeholder="Notas..."></div></div>
-        <button class="btn-s" onclick="salvarConta()">💾 Salvar</button>
+        <button class="btn-s" onclick="salvarConta()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar</button>
       </div>
       <div class="panel">
-        <div class="panel-title">📋 Contas</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Contas</div>
         <div class="filt"><select id="cf-st2" onchange="renderContas()"><option value="">Todos</option><option>Pendente</option><option>Recebido</option><option>Parcial</option><option>Atrasado</option></select></div>
         <div class="tbl-wrap"><div id="lista-contas"><div class="empty">Nenhuma conta encontrada</div></div></div>
       </div>
@@ -491,7 +523,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="sec-gastos" class="sec">
       <div class="pg-hdr"><div class="page-title">Gastos</div><div class="page-sub">Histórico completo de despesas</div></div>
       <div class="panel">
-        <div class="panel-title">📋 Todos os gastos</div>
+        <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Todos os gastos</div>
         <div class="filt">
           <select id="gf-cam" onchange="renderGastos()"><option value="">Todos os caminhões</option><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select>
           <select id="gf-tip" onchange="renderGastos()"><option value="">Fixo e variável</option><option value="fixo">Fixos</option><option value="variavel">Variáveis</option></select>
@@ -510,13 +542,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <option value="anual">Anual</option>
         </select>
         <input type="month" id="dre-mes" onchange="renderDRE()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-family:'Inter',sans-serif;font-size:13px">
-        <button class="btn-s" onclick="renderDRE()">🔄 Atualizar</button>
-        <button class="btn-s" onclick="exportarDREPDF()" style="background:linear-gradient(135deg,#7c3aed,#5b21b6)">📄 Exportar PDF</button>
+        <button class="btn-s" onclick="renderDRE()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Atualizar</button>
+        <button class="btn-s" onclick="exportarDREPDF()" style="background:linear-gradient(135deg,#7c3aed,#5b21b6)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Exportar PDF</button>
       </div>
       <div id="dre-content"></div>
     </div>
       <div class="pg-hdr"><div class="page-title">Relatórios</div><div class="page-sub">Análise mensal completa</div></div>
-      <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()">🔄 Atualizar</button><button class="btn-s" id="btn-export-pdf" onclick="exportarRelatorioPDF()" style="background:var(--accent);color:#fff;border:none">📄 Exportar PDF</button></div>
+      <div class="filt" style="margin-bottom:1.25rem"><input type="month" id="rel-mes" onchange="renderRelatorio()"><button class="btn-s" onclick="renderRelatorio()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Atualizar</button><button class="btn-s" id="btn-export-pdf" onclick="exportarRelatorioPDF()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Exportar PDF</button></div>
       <div class="sgrid" id="rel-stats">
     <div class="sc"><div class="sc-lbl">Receita</div><div class="sc-val g">R$ 0,00</div></div>
     <div class="sc"><div class="sc-lbl">Gastos</div><div class="sc-val r">R$ 0,00</div></div>
@@ -525,10 +557,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="sc"><div class="sc-lbl">Fretes</div><div class="sc-val b">0</div></div>
     <div class="sc"><div class="sc-lbl">Km rodados</div><div class="sc-val a">0 km</div></div></div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title">📊 Gastos por categoria</div><div id="rel-cat"><div class="empty">Sem gastos</div></div></div>
-        <div class="panel"><div class="panel-title">🚛 Por caminhão</div><div id="rel-cam"><div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Rec: R$ 0,00 · Gastos: R$ 0,00</div></div></div></div>
+        <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Gastos por categoria</div><div id="rel-cat"><div class="empty">Sem gastos</div></div></div>
+        <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Por caminhão</div><div id="rel-cam"><div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--text)">ABC2135 — SCANIA R450</span><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 0,00</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Rec: R$ 0,00 · Gastos: R$ 0,00</div></div></div></div>
       </div>
-      <div class="panel"><div class="panel-title">🗓️ Fretes do período</div><div class="tbl-wrap"><div id="rel-fr"><div class="empty">Nenhum frete neste período</div></div></div></div>
+      <div class="panel"><div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Fretes do período</div><div class="tbl-wrap"><div id="rel-fr"><div class="empty">Nenhum frete neste período</div></div></div></div>
     </div>
   </div>
 </div>
@@ -537,11 +569,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <!-- MODAL EDIÇÃO -->
 <div id="modal-overlay" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <div class="modal-title"><span id="modal-title">Editar</span><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-title"><span id="modal-title">Editar</span><button class="modal-close" onclick="closeModal()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div id="modal-body"></div>
     <div style="display:flex;gap:8px;margin-top:1.25rem;justify-content:flex-end">
-      <button class="btn-s" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2);box-shadow:none" onclick="closeModal()">Cancelar</button>
-      <button class="btn-s" id="modal-save-btn">💾 Salvar alterações</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn-s" id="modal-save-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar alterações</button>
     </div>
   </div>
 </div>
