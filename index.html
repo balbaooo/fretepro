@@ -348,12 +348,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="pg-hdr"><div class="page-title">Fretes</div><div class="page-sub">Registre e acompanhe suas viagens</div></div>
       <div class="panel">
         <div class="panel-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Registrar frete</div>
-        <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
+        <div class="fr"><div class="fld"><label>Caminhão</label><select id="f-cam" onchange="sugerirPreco()"><option value="ef8d010c-1966-4e3f-820b-6d96749cda21">ABC2135 — SCANIA R450</option></select></div><div class="fld"><label>Motorista</label><select id="f-mot"><option value="">Sem motorista</option></select></div></div>
         <div class="fr"><div class="fld"><label>Data</label><input id="f-dt" type="date"></div><div class="fld"><label>Cliente</label><input id="f-cli" placeholder="Nome do cliente"></div></div>
-        <div class="fr"><div class="fld"><label>Origem</label><input id="f-ori" placeholder="Cidade, Estado"></div><div class="fld"><label>Destino</label><input id="f-des" placeholder="Cidade, Estado"></div></div>
-        <div class="fr t"><div class="fld"><label>Valor (R$)</label><input id="f-val" type="number" placeholder="0.00"></div><div class="fld"><label>Km rodados</label><input id="f-km" type="number" placeholder="0"></div><div class="fld"><label>Carga</label><input id="f-carg" placeholder="Ex: grãos..."></div></div>
+        <div class="fr"><div class="fld"><label>Origem</label><input id="f-ori" placeholder="Cidade, Estado" oninput="sugerirPreco()"></div><div class="fld"><label>Destino</label><input id="f-des" placeholder="Cidade, Estado" oninput="sugerirPreco()"></div></div>
+        <div class="fr t"><div class="fld"><label>Valor (R$)</label><input id="f-val" type="number" placeholder="0.00"><div id="sugestao-preco" style="display:none;margin-top:.5rem;padding:.75rem;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rsm);font-size:12px;line-height:1.7"></div></div><div class="fld"><label>Km rodados</label><input id="f-km" type="number" placeholder="0" oninput="sugerirPreco()"></div><div class="fld"><label>Carga</label><input id="f-carg" placeholder="Ex: grãos..."></div></div>
         <div class="fr t">
-          <div class="fld"><label>Pedágio (R$)</label><input id="f-ped" type="number" placeholder="0.00"></div>
+          <div class="fld"><label>Pedágio (R$)</label><input id="f-ped" type="number" placeholder="0.00" oninput="sugerirPreco()"></div>
           <div class="fld"><label>Status pagamento</label><select id="f-pag"><option value="Pago">Pago</option><option value="Pendente">Pendente</option><option value="Parcial">Parcial</option></select></div>
           <div class="fld"><label>Status viagem</label><select id="f-st"><option>Concluído</option><option>Em andamento</option><option>Aguardando</option></select></div>
         </div>
@@ -1747,6 +1747,176 @@ window._mapsReady=false;window._mapsReadyCallbacks=[];
 window.onGoogleMapsReady=function(){window._mapsReady=true;window._mapsReadyCallbacks.forEach(fn=>fn());window._mapsReadyCallbacks=[];};
 function waitForMaps(){return new Promise(res=>{if(window._mapsReady)return res();window._mapsReadyCallbacks.push(res);});}
 (function(){const s=document.createElement('script');s.src=`https://maps.googleapis.com/maps/api/js?key=${GM_KEY}&callback=onGoogleMapsReady`;s.async=true;document.head.appendChild(s);})();
+// ============================================================
+// SUGESTÃO DE PREÇO INTELIGENTE — baseada em histórico local
+// ============================================================
+function sugerirPreco(){
+  const el=document.getElementById('sugestao-preco');
+  if(!el)return;
+  const ori=(document.getElementById('f-ori')?.value||'').trim().toLowerCase();
+  const des=(document.getElementById('f-des')?.value||'').trim().toLowerCase();
+  const camId=document.getElementById('f-cam')?.value;
+  const KM_MINIMO=10; // R$/km mínimo aceitável
+  if(ori.length<3||des.length<3){el.style.display='none';return;}
+
+  const historico=fretes.filter(f=>{
+    if(f.status!=='Concluído')return false;
+    const fo=(f.origem||'').toLowerCase();
+    const fd=(f.destino||'').toLowerCase();
+    return fo.includes(ori.split(',')[0].trim())&&fd.includes(des.split(',')[0].trim());
+  });
+
+  const cam=caminhoes.find(c=>c.id===camId);
+  const consumoMedio=cam?.consumo_medio?Number(cam.consumo_medio):null;
+  const ultAbast=abastecimentos.filter(a=>a.tipo!=='Arla 32'&&a.valor_litro).sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
+  const precoLitro=ultAbast.length?ultAbast.reduce((acc,a)=>acc+Number(a.valor_litro),0)/ultAbast.length:6.20;
+
+  // km atual digitado no campo (pode ter ou não)
+  const kmAtual=Number(document.getElementById('f-km')?.value||0);
+  const pedAtual=Number(document.getElementById('f-ped')?.value||0);
+
+  let html='';
+
+  if(historico.length>=1){
+    // ── Dados históricos ──────────────────────────────────
+    const fretesComKm=historico.filter(f=>Number(f.valor||0)>0&&Number(f.km||0)>0);
+    const valores=historico.map(f=>Number(f.valor||0)).filter(v=>v>0);
+    const kms=historico.map(f=>Number(f.km||0)).filter(k=>k>0);
+    const pedagios=historico.map(f=>Number(f.pedagio||0));
+
+    const valMed=valores.length?valores.reduce((a,b)=>a+b,0)/valores.length:0;
+    const valMin=valores.length?Math.min(...valores):0;
+    const valMax=valores.length?Math.max(...valores):0;
+    const kmMed=kms.length?kms.reduce((a,b)=>a+b,0)/kms.length:0;
+    const pedMed=pedagios.length?pedagios.reduce((a,b)=>a+b,0)/pedagios.length:0;
+
+    // R$/km histórico
+    const rkmHist=fretesComKm.map(f=>Number(f.valor)/Number(f.km));
+    const rkmMed=rkmHist.length?rkmHist.reduce((a,b)=>a+b,0)/rkmHist.length:0;
+    const rkmMin=rkmHist.length?Math.min(...rkmHist):0;
+    const rkmMax=rkmHist.length?Math.max(...rkmHist):0;
+
+    // Custo estimado
+    let custoComb=0;
+    const kmRef=kmAtual>0?kmAtual:kmMed;
+    if(kmRef>0&&consumoMedio)custoComb=(kmRef/consumoMedio)*precoLitro;
+    const pedRef=pedAtual>0?pedAtual:pedMed;
+    const custoEstimado=custoComb+pedRef;
+
+    // Valor mínimo pelo critério R$/km
+    const minPorKm=kmRef>0?kmRef*KM_MINIMO:0;
+
+    // Status do R$/km médio histórico
+    const corRkm=rkmMed>=KM_MINIMO?'var(--green)':rkmMed>=8?'var(--amber)':'var(--red)';
+    const statusRkm=rkmMed>=KM_MINIMO?'✅ Acima do mínimo':rkmMed>=8?'⚠️ Na borda':'🚨 Abaixo do mínimo';
+
+    html=`<div style="font-weight:700;color:var(--text);margin-bottom:.5rem">💡 ${historico.length} frete${historico.length>1?'s':''} similar${historico.length>1?'es':''} encontrado${historico.length>1?'s':''}</div>`;
+
+    // Card principal: R$/km em destaque
+    if(rkmHist.length>0){
+      html+=`<div style="background:var(--bg3);border-radius:8px;padding:.65rem .75rem;margin-bottom:.5rem;border:1px solid var(--border2)">
+        <div style="font-size:10px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">R$ por km — métrica principal</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          <div style="text-align:center">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Mínimo hist.</div>
+            <div style="font-weight:700;font-size:15px;color:${rkmMin>=KM_MINIMO?'var(--green)':'var(--red)'}">${rkmMin.toFixed(2)}<span style="font-size:10px;font-weight:400;color:var(--text2)">/km</span></div>
+          </div>
+          <div style="text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Média ✦</div>
+            <div style="font-weight:800;font-size:18px;color:${corRkm}">${rkmMed.toFixed(2)}<span style="font-size:10px;font-weight:400;color:var(--text2)">/km</span></div>
+            <div style="font-size:10px;color:${corRkm}">${statusRkm}</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Máximo hist.</div>
+            <div style="font-weight:700;font-size:15px;color:var(--green)">${rkmMax.toFixed(2)}<span style="font-size:10px;font-weight:400;color:var(--text2)">/km</span></div>
+          </div>
+        </div>
+        <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-size:10px;color:var(--text2)">
+          Mínimo aceitável: <strong style="color:var(--text)">R$ ${KM_MINIMO},00/km</strong>
+          ${kmRef>0?` · Para ${Math.round(kmRef).toLocaleString('pt-BR')} km → mínimo: <strong style="color:var(--amber)">${fmt(minPorKm)}</strong>`:''}
+        </div>
+      </div>`;
+    }
+
+    // Grid valores totais
+    if(valores.length>0){
+      html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:.45rem">
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 4px;text-align:center">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Valor mín. hist.</div>
+          <div style="font-weight:700;color:var(--amber);font-size:12px">${fmt(valMin)}</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 4px;text-align:center;border:1px solid var(--accent)">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Valor médio ✦</div>
+          <div style="font-weight:700;color:var(--green);font-size:12px">${fmt(valMed)}</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 4px;text-align:center">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Valor máx. hist.</div>
+          <div style="font-weight:700;color:var(--green);font-size:12px">${fmt(valMax)}</div>
+        </div>
+      </div>`;
+    }
+
+    // Linha de custo e alertas
+    if(custoEstimado>0){
+      const alertBaixo=valMed>0&&valMed<custoEstimado;
+      html+=`<div style="font-size:11px;color:var(--text2);margin-bottom:3px">
+        Custo estimado: <strong style="color:var(--red)">${fmt(custoEstimado)}</strong>
+        ${kmMed>0?` · Km médio: <strong style="color:var(--text)">${Math.round(kmMed).toLocaleString('pt-BR')} km</strong>`:''}
+      </div>`;
+      if(alertBaixo)html+=`<div style="color:var(--red);font-size:11px;font-weight:600;margin-bottom:3px">⚠️ Média histórica abaixo do custo estimado!</div>`;
+    }
+
+    // Botões de ação
+    const btnStyle="padding:4px 10px;font-size:11px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;";
+    if(minPorKm>0){
+      html+=`<button onclick="document.getElementById('f-val').value='${Math.round(minPorKm)}';sugerirPreco()" style="${btnStyle}margin-top:.4rem;margin-right:5px;border:1px solid var(--amber);background:rgba(245,158,11,0.08);color:var(--amber)">Usar mínimo/km — ${fmt(minPorKm)}</button>`;
+    }
+    if(valMed>0){
+      html+=`<button onclick="document.getElementById('f-val').value='${Math.round(valMed)}';sugerirPreco()" style="${btnStyle}margin-top:.4rem;border:1px solid var(--accent);background:var(--accent-subtle);color:var(--accent)">Usar média — ${fmt(valMed)}</button>`;
+    }
+
+  } else {
+    // ── Sem histórico — estima pelo km atual ──────────────
+    if(kmAtual>0){
+      const minPorKm=kmAtual*KM_MINIMO;
+      let custoComb=0;
+      if(consumoMedio)custoComb=(kmAtual/consumoMedio)*precoLitro;
+      const custoTotal=custoComb+pedAtual;
+      const minCusto=custoTotal*1.3;
+      const sugerido=Math.max(minPorKm,minCusto);
+      const rkmCusto=custoTotal>0?(custoTotal/kmAtual):0;
+
+      html=`<div style="font-weight:700;color:var(--text);margin-bottom:.4rem">💡 Sem histórico nesta rota</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:.65rem .75rem;margin-bottom:.45rem;border:1px solid var(--border2)">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Calculando para ${kmAtual.toLocaleString('pt-BR')} km</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Mínimo por R$/km</div>
+              <div style="font-weight:800;font-size:16px;color:var(--amber)">${fmt(minPorKm)}</div>
+              <div style="font-size:10px;color:var(--text2)">= ${kmAtual.toLocaleString('pt-BR')} km × R$ ${KM_MINIMO}/km</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text2);margin-bottom:2px">Mínimo pelo custo (+30%)</div>
+              <div style="font-weight:800;font-size:16px;color:var(--accent)">${fmt(minCusto)}</div>
+              <div style="font-size:10px;color:var(--text2)">${consumoMedio?`Diesel: ${fmt(custoComb)}`:'(cadastre consumo do caminhão)'}${pedAtual>0?` + pedágio: ${fmt(pedAtual)}`:''}</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)">
+            Valor sugerido (o maior dos dois): <strong style="color:var(--green);font-size:13px">${fmt(sugerido)}</strong>
+            ${rkmCusto>0?` · Custo real: <strong style="color:var(--red)">${rkmCusto.toFixed(2)}/km</strong>`:''}
+          </div>
+        </div>
+        <button onclick="document.getElementById('f-val').value='${Math.round(sugerido)}';sugerirPreco()" style="padding:4px 12px;font-size:11px;border:1px solid var(--accent);border-radius:5px;background:var(--accent-subtle);color:var(--accent);cursor:pointer;font-family:'Inter',sans-serif">Usar sugerido — ${fmt(sugerido)}</button>`;
+    } else {
+      html=`<div style="color:var(--text2)">📊 Nenhum frete concluído nesta rota. Preencha o <strong style="color:var(--text)">Km rodados</strong> para ver o valor mínimo sugerido.</div>`;
+    }
+  }
+
+  el.innerHTML=html;
+  el.style.display='block';
+}
+// ============================================================
+
 init();
 </script>
 
