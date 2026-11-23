@@ -141,15 +141,7 @@ A execução com dados e integrações requer configurar um projeto Supabase, as
 
 *Essas são recomendações de segurança, não uma afirmação de que todas já foram auditadas no projeto.*
 
-## Próximos passos da documentação
 
-- [x] Apresentação do problema e do contexto de uso
-- [x] Screenshots reais dos principais módulos
-- [x] Visão conceitual da arquitetura e stack
-- [ ] Documentar origem e atualização das tarifas de pedágio
-- [ ] Registrar exemplos de testes e validação de cálculos
-- [ ] Publicar esquema SQL sanitizado e instruções completas de instalação
-- [ ] Revisar segurança e permissões antes de disponibilizar uma conta de demonstração
 
 ## ‍Autor
 
